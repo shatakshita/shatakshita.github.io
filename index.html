@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shatakshita Shekhar - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #a78bfa, #fff, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            color: #c4b5fd;
+            margin-bottom: 20px;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-links a {
+            color: #a78bfa;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #a78bfa;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+
+        .contact-links a:hover {
+            background: #a78bfa;
+            color: #1a0a2e;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(167, 139, 250, 0.4);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #e0e0e0;
+        }
+
+        .tab:hover {
+            background: rgba(167, 139, 250, 0.1);
+            border-color: #a78bfa;
+        }
+
+        .tab.active {
+            background: #a78bfa;
+            color: #1a0a2e;
+            font-weight: bold;
+        }
+
+        .content-section {
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #a78bfa;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.2);
+        }
+
+        .card h3 {
+            color: #a78bfa;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .card h4 {
+            color: #c4b5fd;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.3s;
+        }
+
+        .skill-category:hover {
+            border-color: #a78bfa;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+        }
+
+        .skill-category h3 {
+            color: #a78bfa;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .skill-item {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 8px 15px;
+            margin: 8px 0;
+            border-radius: 20px;
+            display: inline-block;
+            margin-right: 8px;
+            transition: all 0.3s;
+        }
+
+        .skill-item:hover {
+            background: rgba(167, 139, 250, 0.3);
+            transform: scale(1.05);
+        }
+
+        .achievement-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #0a0e27;
+            padding: 5px 15px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .project-link {
+            color: #a78bfa;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .project-link:hover {
+            border-bottom-color: #a78bfa;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #b0b0b0;
+        }
+
+        .highlight {
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            color: #888;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .tagline {
+                font-size: 1em;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Shatakshita Shekhar</h1>
+            <p class="tagline">Aspiring Astrophysicist | JEE 2026 Aspirant | Content Creator | Tech & Space Enthusiast</p>
+            <p style="color: #888; margin: 10px 0;">Ghaziabad, Uttar Pradesh, India</p>
+            <div class="contact-links">
+                <a href="mailto:shekhar.shatakshita@gmail.com">✉️ Email</a>
+                <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank">💼 LinkedIn</a>
+                <a href="https://github.com/shatakshita" target="_blank">💻 GitHub</a>
+                <a href="https://instagram.com/shattswrites" target="_blank">📸 @shattswrites</a>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('about')">About</div>
+            <div class="tab" onclick="showSection('skills')">Technical Skills</div>
+            <div class="tab" onclick="showSection('projects')">Projects</div>
+            <div class="tab" onclick="showSection('experience')">Experience</div>
+            <div class="tab" onclick="showSection('achievements')">Achievements</div>
+            <div class="tab" onclick="showSection('approach')">Problem-Solving</div>
+        </div>
+
+        <div id="about" class="content-section active">
+            <div class="card">
+                <h3>About Me</h3>
+                <p>I'm an aspiring astrophysicist and JEE 2026 candidate passionate about space science, innovation, and analytical problem-solving. My journey combines rigorous academic preparation in Physics, Chemistry, and Mathematics with hands-on technical learning in Python and computational thinking.</p>
+                <br>
+                <p>Beyond academics, I bridge science and art through my poetry platform <span class="highlight">@shattswrites</span>, where I've reached millions with emotionally resonant content. This unique combination of analytical and creative thinking shapes my approach to research and problem-solving.</p>
+                <br>
+                <p><strong>Current Focus:</strong> Building a strong PCM foundation for JEE 2026, learning Python for scientific applications, and contributing to citizen science through Zooniverse while developing content strategies that engage diverse audiences.</p>
+            </div>
+        </div>
+
+        <div id="skills" class="content-section">
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>🔬 Scientific & Analytical</h3>
+                    <div class="skill-item">Physics, Chemistry, Mathematics</div>
+                    <div class="skill-item">Data Analysis</div>
+                    <div class="skill-item">Research Methodology</div>
+                    <div class="skill-item">Citizen Science (Zooniverse)</div>
+                    <div class="skill-item">Scientific Computing</div>
+                    <div class="skill-item">Analytical Problem-Solving</div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>💻 Technical Skills</h3>
+                    <div class="skill-item">Python Programming</div>
+                    <div class="skill-item">Scientific Computing (freeCodeCamp)</div>
+                    <div class="skill-item">Interactive Web Content</div>
+                    <div class="skill-item">File Handling</div>
+                    <div class="skill-item">Data Processing</div>
+                    <div class="skill-item">HTML, CSS, JavaScript</div>
+                    <div class="skill-item">Streamlit</div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>🎨 Creative & Communication</h3>
+                    <div class="skill-item">Content Strategy</div>
+                    <div class="skill-item">Creative Writing & Poetry</div>
+                    <div class="skill-item">Social Media Growth (1M+ reach)</div>
+                    <div class="skill-item">Audience Engagement</div>
+                    <div class="skill-item">Digital Campaign Design</div>
+                    <div class="skill-item">Logo Designing</div>
+                </div>
+
+                <div class="skill-category">
+                    <h3>🌍 Languages</h3>
+                    <div class="skill-item">English (Native/Bilingual)</div>
+                    <div class="skill-item">Hindi (Native/Bilingual)</div>
+                    <div class="skill-item">French (Elementary)</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="projects" class="content-section">
+            <div class="card">
+                <h3>🚀 Featured Coding Projects</h3>
+                <p style="margin-bottom: 20px;">Building practical applications and solving computational problems through code.</p>
+            </div>
+
+            <div class="card">
+                <h4>🎮 RPG Mini Game</h4>
+                <p class="date">Python | Streamlit | Game Logic Design</p>
+                <div style="margin: 15px 0;">
+                    <img src="https://via.placeholder.com/800x400/2d1b4e/a78bfa?text=RPG+Mini+Game+Screenshot" alt="RPG Mini Game" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
+                </div>
+                <p>A fun, interactive role-playing game originally built as a Python CLI project and transformed into a web app using Streamlit. Players create custom characters by distributing points across three stats — Strength, Intelligence, and Charisma — while uncovering three hidden legendary archetypes embedded in the game logic.</p>
+                <p style="margin-top: 10px;">The project preserves the humor and personality of the original CLI version, featuring witty feedback, playful insults on failure, and a distinctive dot-based stat visualization.</p>
+                
+                <h4 style="margin-top: 20px; color: #c4b5fd; font-size: 1.1em;">How the game works:</h4>
+                <ul>
+                    <li>Players assign values to Strength, Intelligence, and Charisma</li>
+                    <li>Each stat must be between 1 and 100</li>
+                    <li>The total of all three stats must match a hidden target number</li>
+                    <li>A hint is revealed every time the player fails</li>
+                    <li>The game contains three legendary archetypes</li>
+                    <li>Entering an exact stat combination unlocks a legendary character</li>
+                    <li>Any other valid combination creates a Custom Build</li>
+                    <li>Incorrect totals trigger humorous, in-game insults</li>
+                </ul>
+                
+                <h4 style="margin-top: 20px; color: #c4b5fd; font-size: 1.1em;">What this project demonstrates:</h4>
+                <ul>
+                    <li>Python programming (logic, validation, randomization)</li>
+                    <li>Interactive web application development using Streamlit</li>
+                    <li>Game logic design and user feedback systems</li>
+                    <li>Transitioning from CLI to web-based applications</li>
+                </ul>
+                
+                <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" class="project-link" style="background: rgba(167, 139, 250, 0.2); padding: 10px 20px; border-radius: 8px; display: inline-block;">🎮 Play Live Demo →</a>
+                    <a href="https://github.com/shatakshita" target="_blank" class="project-link" style="background: rgba(167, 139, 250, 0.2); padding: 10px 20px; border-radius: 8px; display: inline-block;">💻 View Code on GitHub →</a>
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>Skills:</strong> Python, Logical Reasoning, Game Logic Design, Streamlit</p>
+            </div>
+
+            <div class="card">
+                <h4>📋 Task Tracker</h4>
+                <p class="date">Python | File Handling | CLI Application</p>
+                <div style="margin: 15px 0;">
+                    <img src="https://via.placeholder.com/800x400/2d1b4e/a78bfa?text=Task+Tracker+Screenshot" alt="Task Tracker" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
+                </div>
+                <p>A beginner-friendly, console-based Python application designed to help users efficiently manage daily tasks. The project focuses on practical programming concepts and clean data handling, making it suitable for school and personal use.</p>
+                
+                <h4 style="margin-top: 20px; color: #c4b5fd; font-size: 1.1em;">Features:</h4>
+                <ul>
+                    <li>Add, update, and delete tasks</li>
+                    <li>Track task status, priority, and due dates</li>
+                    <li>Store and manage data using CSV files</li>
+                    <li>Simple, clean command-line interface</li>
+                </ul>
+                
+                <h4 style="margin-top: 20px; color: #c4b5fd; font-size: 1.1em;">What this project demonstrates:</h4>
+                <ul>
+                    <li>Practical Python programming</li>
+                    <li>File handling and data persistence</li>
+                    <li>User interaction through a structured CLI</li>
+                    <li>Extensible program design for future enhancements</li>
+                </ul>
+                
+                <div style="margin-top: 20px;">
+                    <a href="https://github.com/shatakshita" target="_blank" class="project-link" style="background: rgba(167, 139, 250, 0.2); padding: 10px 20px; border-radius: 8px; display: inline-block;">💻 View Code on GitHub →</a>
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>Skills:</strong> Python, File Handling, Critical Thinking, Computer Literacy</p>
+                <p style="margin-top: 5px;"><strong>Associated with:</strong> St. Teresa School</p>
+            </div>
+
+            <div class="card">
+                <h4>📊 Scientific Data Analysis Tools</h4>
+                <p class="date">Python | Data Processing</p>
+                <p>Developing Python scripts for analyzing scientific datasets, implementing data visualization techniques, and automating data processing workflows. Focus on astronomical data and research applications.</p>
+                <ul>
+                    <li>Data parsing and cleaning for large datasets</li>
+                    <li>Statistical analysis and pattern recognition</li>
+                    <li>Visualization using matplotlib and scientific libraries</li>
+                </ul>
+                <a href="https://github.com/shatakshita" target="_blank" class="project-link">View on GitHub →</a>
+            </div>
+
+            <div class="card">
+                <h4>🧮 Physics Problem Solvers</h4>
+                <p class="date">Python | Computational Physics</p>
+                <p>Building computational tools to solve complex physics problems, simulate physical phenomena, and visualize mathematical concepts related to JEE preparation and beyond.</p>
+                <ul>
+                    <li>Numerical methods for solving differential equations</li>
+                    <li>Physics simulation and modeling</li>
+                    <li>Mathematical visualization tools</li>
+                </ul>
+                <a href="https://github.com/shatakshita" target="_blank" class="project-link">View on GitHub →</a>
+            </div>
+
+            <div class="card">
+                <h4>📝 freeCodeCamp Certification Projects</h4>
+                <p class="date">Python | Scientific Computing</p>
+                <p>Completing comprehensive projects as part of the Scientific Computing with Python certification, focusing on algorithm design, data structures, and computational problem-solving.</p>
+                <ul>
+                    <li>Arithmetic Formatter</li>
+                    <li>Time Calculator</li>
+                    <li>Budget App & Polygon Area Calculator</li>
+                    <li>Probability Calculator</li>
+                </ul>
+                <a href="https://github.com/shatakshita" target="_blank" class="project-link">View on GitHub →</a>
+            </div>
+
+            <div class="card">
+                <h3>🔧 Technical Proficiencies Demonstrated</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 15px;">
+                    <div style="background: rgba(167, 139, 250, 0.1); padding: 10px; border-radius: 8px;">
+                        <strong>Languages:</strong> Python, HTML, CSS, JavaScript
+                    </div>
+                    <div style="background: rgba(167, 139, 250, 0.1); padding: 10px; border-radius: 8px;">
+                        <strong>Libraries:</strong> NumPy, Pandas, Matplotlib, Streamlit
+                    </div>
+                    <div style="background: rgba(167, 139, 250, 0.1); padding: 10px; border-radius: 8px;">
+                        <strong>Tools:</strong> Git, VS Code, Jupyter
+                    </div>
+                    <div style="background: rgba(167, 139, 250, 0.1); padding: 10px; border-radius: 8px;">
+                        <strong>Focus:</strong> Scientific Computing, Data Analysis
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="experience" class="content-section">
+            <div class="card">
+                <h3>Zooniverse</h3>
+                <h4>Citizen Scientist</h4>
+                <p class="date">January 2026 - Present</p>
+                <p>Contributing to scientific research through data classification and analysis projects in astronomy and other fields. Participating in collaborative research efforts that advance scientific understanding through crowdsourced data analysis.</p>
+            </div>
+
+            <div class="card">
+                <h3>Instagram - @shattswrites</h3>
+                <h4>Social Media Content Creator (Writer & Poet)</h4>
+                <p class="date">September 2024 - Present</p>
+                <ul>
+                    <li>Create emotionally resonant micro-poetry and short sentences connecting with <span class="highlight">millions of viewers</span></li>
+                    <li>Write full-length poems exploring themes of love, self-discovery, and human emotions</li>
+                    <li>Achieved viral reach: multiple posts with <span class="highlight">1M–3.2M+ views</span></li>
+                    <li>Experiment with different poetic forms and storytelling techniques to grow audience engagement</li>
+                    <li>Develop content strategy that balances creativity with data-driven insights</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>The Nalanda MUN</h3>
+                <h4>Secretariat Member</h4>
+                <p class="date">June 2025 - September 2025</p>
+                <ul>
+                    <li>Managed and curated content for official MUN communications</li>
+                    <li>Designed digital campaigns to enhance outreach and delegate participation</li>
+                    <li>Oversaw social media strategy and promotional content</li>
+                    <li>Collaborated with team to expand digital presence and recruit participants</li>
+                    <li>Contributed to planning and execution of event-related communications</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Education</h3>
+                <h4>St. Teresa School</h4>
+                <p class="date">2014 - 2026</p>
+                <br>
+                <h4>freeCodeCamp - Scientific Computing with Python</h4>
+                <p class="date">Certificate Program | May 2025 - December 2026</p>
+                <p>Developing computational thinking and Python programming skills for scientific applications and data analysis.</p>
+            </div>
+        </div>
+
+        <div id="achievements" class="content-section">
+            <div class="card">
+                <h3>🏆 Awards & Recognition</h3>
+                <div class="achievement-badge">🥇 Gold Medal – Social Work</div>
+                <div class="achievement-badge">🥇 Gold Medal & Trophy – Logo Designing</div>
+                <div class="achievement-badge">🏅 Best Journalist Award – Gaurs MUN 2025</div>
+                <div class="achievement-badge">🎖️ Social and Group Development</div>
+                <div class="achievement-badge">🇮🇳 Azadi Ka Amrit Mahotsav (Poetry)</div>
+            </div>
+
+            <div class="card">
+                <h3>📜 Certifications & Competitions</h3>
+                <ul>
+                    <li><span class="highlight">National Space Innovation Challenge</span> – ISRO and AIM</li>
+                    <li><span class="highlight">SOF National Science Olympiad (NSO)</span></li>
+                    <li><span class="highlight">SOF National Cyber Olympiad (NCO)</span></li>
+                    <li><span class="highlight">NuTom Comprehensive Life Skills Olympiad</span> – Associated with IIT Delhi</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📊 Impact Metrics</h3>
+                <ul>
+                    <li>Content reach: <span class="highlight">1M–3.2M+ views</span> on individual posts</li>
+                    <li>Growing audience engagement across poetry and science communication</li>
+                    <li>Active participation in citizen science contributing to real research</li>
+                    <li>Multi-disciplinary recognition in science, arts, and journalism</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="approach" class="content-section">
+            <div class="card">
+                <h3>🧠 My Problem-Solving Approach</h3>
+                <p>My approach to tackling challenges combines analytical rigor with creative thinking:</p>
+            </div>
+
+            <div class="card">
+                <h4>1. Interdisciplinary Thinking</h4>
+                <p>I don't see boundaries between science and art. My experience creating viral poetry teaches me audience psychology, while my physics and math training gives me systematic problem-solving frameworks. This combination allows me to approach problems from multiple angles.</p>
+            </div>
+
+            <div class="card">
+                <h4>2. Data-Driven & Intuitive</h4>
+                <p>Through citizen science work and content creation, I've learned to balance quantitative analysis with qualitative insights. Whether analyzing astronomical data or engagement metrics, I look for patterns while staying open to unexpected discoveries.</p>
+            </div>
+
+            <div class="card">
+                <h4>3. Iterative Learning</h4>
+                <p>My journey with Python and scientific computing reflects my approach: start with fundamentals, build incrementally, test frequently, and refine based on results. I apply this whether coding algorithms, solving physics problems, or crafting content.</p>
+            </div>
+
+            <div class="card">
+                <h4>4. Collaborative & Communicative</h4>
+                <p>From MUN secretariat work to citizen science projects, I've learned that complex problems require teamwork. I focus on clear communication, whether explaining technical concepts or coordinating campaigns, making sure ideas are accessible to diverse audiences.</p>
+            </div>
+
+            <div class="card">
+                <h4>5. Research-Oriented Mindset</h4>
+                <p>My participation in national competitions (ISRO challenges, Science Olympiads) and geospatial programs has cultivated a research mindset: asking the right questions, finding reliable sources, validating assumptions, and documenting findings systematically.</p>
+            </div>
+
+            <div class="card">
+                <h4>Example: Bridging Reach & Resonance</h4>
+                <p><strong>Challenge:</strong> Growing a poetry platform from zero to millions of views.</p>
+                <p><strong>Approach:</strong></p>
+                <ul>
+                    <li>Analyzed what makes content emotionally resonant (qualitative)</li>
+                    <li>Tracked engagement patterns and optimal posting times (quantitative)</li>
+                    <li>Experimented with different formats while maintaining authentic voice</li>
+                    <li>Iterated based on feedback and performance data</li>
+                    <li>Applied similar analytical thinking to other domains including scientific communication</li>
+                </ul>
+                <p><strong>Result:</strong> Created a sustainable content strategy that balances creativity with strategic growth, teaching me skills applicable to research communication and scientific outreach.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Shatakshita Shekhar | Built with passion for science and creativity</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Open to research opportunities, internships, and collaborative projects</p>
+        </footer>
+    </div>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Tab switching
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
