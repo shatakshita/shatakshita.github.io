@@ -388,6 +388,14 @@
     .hero-link svg { width: 1.25rem; height: 1.25rem; transition: transform 0.3s ease; }
     .hero-link:hover svg { transform: scale(1.1); }
     .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.75rem; animation: fadeIn 1s ease 2s both; }
+    @media (max-width: 768px) {
+  .scroll-indicator {
+    position: static;
+    margin-top: 2rem;
+    transform: none;
+  }
+}
+
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .scroll-indicator span { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Space Grotesk", monospace; letter-spacing: 0.3em; text-transform: uppercase; }
     .scroll-mouse { width: 1.5rem; height: 2.5rem; border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 9999px; display: flex; justify-content: center; padding-top: 0.5rem; }
