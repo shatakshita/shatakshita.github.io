@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shatakshita Shekhar | Aspiring Astrophysicist</title>
+  <meta name="description" content="Aspiring Astrophysicist, JEE 2026 Aspirant, Content Creator, and Tech & Space Enthusiast">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border-color: rgba(168, 85, 247, 0.1); }
+    :root {
+      --background: #0a0a14;
+      --foreground: #f8f8fc;
+      --muted-foreground: #9090a0;
+      --purple-400: #a855f7;
+      --purple-500: #a855f7;
+      --violet-400: #8b5cf6;
+      --violet-500: #8b5cf6;
+      --fuchsia-400: #e879f9;
+      --fuchsia-500: #d946ef;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Outfit", sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: #a855f7; color: #0a0a14; }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #e879f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-gradient-cool {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .glass {
+      background: rgba(22, 22, 38, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(168, 85, 247, 0.1);
+    }
+    .glass-warm {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(22, 22, 38, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(168, 85, 247, 0.15);
+    }
+    .glass-cool {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(22, 22, 38, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.15);
+    }
+    .glow-warm { box-shadow: 0 0 60px rgba(168, 85, 247, 0.2), 0 0 100px rgba(139, 92, 246, 0.1); }
+    .hover-lift { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 40px rgba(168, 85, 247, 0.15); }
+
+    .animated-gradient-border {
+      position: relative;
+      background: rgba(22, 22, 38, 0.9);
+      border-radius: 1.5rem;
+    }
+    .animated-gradient-border::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      padding: 1px;
+      background: linear-gradient(var(--gradient-angle, 135deg), #a855f7, #c084fc, #e879f9, #8b5cf6, #7c3aed, #a855f7);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: borderRotate 4s linear infinite;
+    }
+    @property --gradient-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes borderRotate { 0% { --gradient-angle: 0deg; } 100% { --gradient-angle: 360deg; } }
+
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: orbFloat 20s ease-in-out infinite; pointer-events: none; }
+    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, transparent 70%); top: -10%; left: -10%; animation-delay: 0s; }
+    .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%); top: 40%; right: -15%; animation-delay: -7s; }
+    .orb-3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(192, 132, 252, 0.25) 0%, transparent 70%); bottom: 10%; left: 20%; animation-delay: -14s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(50px, -30px) scale(1.1); }
+      50% { transform: translate(-30px, 50px) scale(0.95); }
+      75% { transform: translate(-50px, -20px) scale(1.05); }
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #constellation-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.8; }
+    .parallax-orbs { position: fixed; inset: 0; pointer-events: none; overflow: hidden; will-change: transform; }
+
+    .warp-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    .warp-overlay.active { opacity: 1; }
+    .warp-container { transition: filter 0.2s ease, transform 0.2s ease; }
+    .warp-container.warping { filter: blur(2px) brightness(1.2) saturate(1.3); transform: scale(1.01); }
+
+    nav {
+      position: sticky;
+      top: 1.5rem;
+      z-index: 50;
+      margin: 0 auto 5rem;
+      width: fit-content;
+      animation: slideDown 0.8s ease-out;
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-100px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 0.5s ease;
+    }
+    .nav-inner.scrolled { box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(168, 85, 247, 0.15); }
+    .nav-btn {
+      position: relative;
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-btn:hover { color: var(--foreground); transform: scale(1.05); }
+    .nav-btn.active { color: white; }
+    .nav-btn.active::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 0.75rem;
+      background: linear-gradient(to right, #a855f7, #8b5cf6);
+      z-index: -1;
+    }
+    .nav-btn span.emoji { font-size: 0.75rem; }
+    .nav-btn span.label { display: none; }
+    @media (min-width: 640px) { .nav-btn span.label { display: inline; } }
+
+    section { padding: 8rem 1.5rem; position: relative; }
+    .section-blur {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+    .max-w-4xl { max-width: 56rem; margin: 0 auto; }
+    .max-w-5xl { max-width: 64rem; margin: 0 auto; }
+    .max-w-6xl { max-width: 72rem; margin: 0 auto; }
+
+    .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3.5rem; }
+    .section-header .emoji { font-size: 3rem; }
+    .section-header h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; }
+
+    .card {
+      padding: 2rem;
+      border-radius: 1.5rem;
+      transition: all 0.5s ease;
+    }
+    .card:hover { transform: translateY(-5px) scale(1.02); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1.5rem; }
+    @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+    .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    @media (min-width: 768px) { .grid-4 { grid-template-columns: repeat(4, 1fr); } }
+
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .skill-item:hover { transform: translateX(8px); background: rgba(255, 255, 255, 0.05); }
+    .skill-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+    .stat-card {
+      padding: 1.25rem;
+      border-radius: 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover { transform: scale(1.05) translateY(-3px); }
+    .stat-value { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .stat-label { font-size: 0.75rem; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .timeline { position: relative; }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 1.5rem;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, #a855f7, #8b5cf6, #e879f9);
+      opacity: 0.3;
+    }
+    @media (min-width: 768px) { .timeline::before { left: 50%; } }
+    .timeline-item { position: relative; padding-left: 4rem; margin-bottom: 3rem; }
+    @media (min-width: 768px) {
+      .timeline-item { padding-left: 0; padding-right: 52%; }
+      .timeline-item:nth-child(even) { padding-left: 52%; padding-right: 0; }
+    }
+    .timeline-dot {
+      position: absolute;
+      left: 0.75rem;
+      top: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      z-index: 10;
+      animation: pulse 2s infinite;
+    }
+    @media (min-width: 768px) { .timeline-dot { left: 50%; transform: translateX(-50%); } }
+
+    .project-card { border-radius: 1.5rem; overflow: hidden; }
+    .project-header { padding: 2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; cursor: pointer; }
+    .project-title { display: flex; align-items: center; gap: 1rem; }
+    .project-title .emoji { font-size: 2.5rem; }
+    .project-title h3 { font-size: 1.5rem; font-weight: 700; }
+    .project-tech { font-size: 0.875rem; font-family: "Space Grotesk", monospace; margin-top: 0.75rem; }
+    .project-desc { color: var(--muted-foreground); margin-top: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .project-chevron { font-size: 2rem; transition: transform 0.3s ease; }
+    .project-chevron.open { transform: rotate(90deg); }
+    .project-content { padding: 0 2rem 2rem; border-top: 1px solid rgba(168, 85, 247, 0.1); display: none; }
+    .project-content.open { display: block; padding-top: 2rem; }
+    .project-list { display: grid; gap: 0.75rem; }
+    @media (min-width: 768px) { .project-list.two-col { grid-template-columns: repeat(2, 1fr); } }
+    .project-list-item { display: flex; align-items: flex-start; gap: 0.75rem; color: var(--muted-foreground); }
+    .project-buttons { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary { color: #0a0a14; }
+    .btn-primary:hover { transform: scale(1.05) translateY(-2px); }
+    .btn-secondary { background: transparent; }
+    .btn-secondary:hover { transform: scale(1.05) translateY(-2px); }
+
+    .award-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .award-item:hover { transform: translateX(10px) scale(1.02); border-color: rgba(168, 85, 247, 0.2); }
+    .award-emoji { font-size: 1.875rem; }
+    .award-dot { margin-left: auto; width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+
+    .cert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .cert-item:hover { transform: translateX(8px); background: rgba(255, 255, 255, 0.02); }
+    .cert-dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; margin-top: 0.375rem; flex-shrink: 0; }
+
+    .metric-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.25rem;
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .metric-item:hover { transform: scale(1.03); }
+    .metric-emoji { font-size: 1.5rem; }
+
+    .approach-item {
+      padding: 2rem;
+      border-radius: 1.5rem;
+      transition: all 0.4s ease;
+      cursor: default;
+    }
+    .approach-item:hover { transform: translateX(10px); }
+    .approach-item:hover .approach-number { color: inherit; }
+    .approach-header { display: flex; align-items: flex-start; gap: 1.5rem; }
+    .approach-number { font-size: 3rem; font-weight: 700; font-family: "Space Grotesk", monospace; color: rgba(255, 255, 255, 0.1); transition: color 0.3s ease; }
+    .approach-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem; transition: color 0.3s ease; }
+    .approach-content { color: var(--muted-foreground); line-height: 1.7; }
+
+    .case-study { padding: 2.5rem; border-radius: 1.5rem; }
+    .case-study h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
+    .case-section { margin-bottom: 2rem; }
+    .case-section h4 { font-weight: 700; margin-bottom: 0.5rem; font-size: 1.125rem; }
+    .case-list { list-style: none; }
+    .case-list li { display: flex; align-items: flex-start; gap: 0.75rem; color: var(--muted-foreground); margin-bottom: 0.75rem; }
+    .case-result { padding-top: 1.5rem; border-top: 1px solid rgba(168, 85, 247, 0.2); }
+
+    #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem 1.5rem; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 9999px;
+      margin-bottom: 2.5rem;
+      animation: fadeInUp 1s ease 0.2s both;
+    }
+    .hero-badge .sparkle { animation: sparkle 2s infinite; }
+    @keyframes sparkle { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .hero-badge .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #8b5cf6; animation: pulse 2s infinite; }
+    .hero-name { font-size: clamp(3rem, 10vw, 6rem); font-weight: 700; line-height: 0.95; margin-bottom: 1.5rem; }
+    .hero-name span { display: block; animation: fadeInUp 0.8s ease both; }
+    .hero-name span:nth-child(1) { animation-delay: 0.4s; }
+    .hero-name span:nth-child(2) { animation-delay: 0.6s; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-tagline { font-size: 1.125rem; color: var(--muted-foreground); margin-bottom: 0.75rem; animation: fadeInUp 0.6s ease 0.8s both; }
+    .hero-tagline .purple { color: #a855f7; }
+    .hero-tagline .violet { color: #8b5cf6; }
+    .hero-location { font-size: 0.875rem; color: rgba(144, 144, 160, 0.6); font-family: "Space Grotesk", monospace; margin-bottom: 3rem; animation: fadeInUp 0.5s ease 1s both; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .hero-location .pin { animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    .hero-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; animation: fadeInUp 0.6s ease 1.2s both; }
+    .hero-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      text-decoration: none;
+      color: var(--foreground);
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .hero-link:hover { transform: scale(1.08) translateY(-5px); }
+    .hero-link svg { width: 1.25rem; height: 1.25rem; transition: transform 0.3s ease; }
+    .hero-link:hover svg { transform: scale(1.1); }
+    .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.75rem; animation: fadeIn 1s ease 2s both; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .scroll-indicator span { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Space Grotesk", monospace; letter-spacing: 0.3em; text-transform: uppercase; }
+    .scroll-mouse { width: 1.5rem; height: 2.5rem; border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 9999px; display: flex; justify-content: center; padding-top: 0.5rem; }
+    .scroll-dot { width: 0.375rem; height: 0.75rem; background: #a855f7; border-radius: 9999px; animation: scrollDot 1.5s infinite; }
+    @keyframes scrollDot { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(12px); opacity: 0.3; } }
+
+    footer { padding: 5rem 1.5rem; border-top: 1px solid rgba(168, 85, 247, 0.1); position: relative; overflow: hidden; }
+    footer::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(168, 85, 247, 0.05), transparent); pointer-events: none; }
+    .footer-content { max-width: 64rem; margin: 0 auto; position: relative; }
+    .footer-top { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; }
+    @media (min-width: 768px) { .footer-top { flex-direction: row; justify-content: space-between; } }
+    .footer-info { text-align: center; }
+    @media (min-width: 768px) { .footer-info { text-align: left; } }
+    .footer-name { font-size: 1.875rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .footer-desc { color: var(--muted-foreground); max-width: 28rem; }
+    .footer-links { display: flex; gap: 1rem; }
+    .footer-link {
+      padding: 1rem;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    .footer-link:hover { transform: scale(1.2) translateY(-5px); }
+    .footer-link svg { width: 1.25rem; height: 1.25rem; }
+    .footer-bottom {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(168, 85, 247, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) { .footer-bottom { flex-direction: row; justify-content: space-between; } }
+    .footer-copy { display: flex; align-items: center; gap: 0.5rem; color: var(--muted-foreground); font-size: 0.875rem; }
+    .footer-heart { color: #a855f7; animation: pulse 1s infinite; }
+    .back-to-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .back-to-top:hover { transform: scale(1.1) translateY(-3px); color: #a855f7; }
+    .back-to-top svg { width: 1rem; height: 1rem; }
+
+    .edu-grid { display: grid; gap: 1.5rem; }
+    @media (min-width: 768px) { .edu-grid { grid-template-columns: repeat(2, 1fr); } }
+    .edu-card { padding: 2rem; border-radius: 1.5rem; }
+    .edu-content { display: flex; align-items: flex-start; gap: 1rem; }
+    .edu-emoji { font-size: 1.875rem; }
+    .edu-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .edu-period { font-size: 0.875rem; color: #8b5cf6; font-family: "Space Grotesk", monospace; margin-bottom: 0.75rem; }
+    .edu-desc { font-size: 0.875rem; color: var(--muted-foreground); }
+
+    .svg-draw path, .svg-draw ellipse, .svg-draw circle {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawSVG 2s ease forwards;
+    }
+    @keyframes drawSVG { to { stroke-dashoffset: 0; } }
+    .svg-icon { opacity: 0.3; }
+
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in-left.visible { opacity: 1; transform: translateX(0); }
+    .fade-in-right { opacity: 0; transform: translateX(40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in-right.visible { opacity: 1; transform: translateX(0); }
+  </style>
+</head>
+<body>
+  <div class="warp-overlay" id="warpOverlay"></div>
+  <div class="warp-container" id="warpContainer">
+    <canvas id="constellation-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="parallax-orbs" id="parallaxOrbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <div style="position: relative; z-index: 10;">
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-badge glass-warm">
+          <svg class="sparkle" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2">
+            <path d="M12 3v1m0 16v1m-9-9h1m16 0h1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+          </svg>
+          <span style="font-size: 0.875rem; font-weight: 500;">Open for Opportunities</span>
+          <span class="dot"></span>
+        </div>
+
+        <h1 class="hero-name">
+          <span>Shatakshita</span>
+          <span class="text-gradient">Shekhar</span>
+        </h1>
+
+        <p class="hero-tagline">
+          <span class="purple">Aspiring Astrophysicist</span> • JEE 2026 Aspirant • 
+          <span class="violet">Content Creator</span> • Tech & Space Enthusiast
+        </p>
+
+        <p class="hero-location">
+          <span class="pin">📍</span>
+          Ghaziabad, Uttar Pradesh, India
+        </p>
+
+        <div class="hero-links">
+          <a href="mailto:shekhar.shatakshita@gmail.com" class="hero-link glass hover-lift" style="border-color: rgba(168, 85, 247, 0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>Email</span>
+          </a>
+          <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color: rgba(139, 92, 246, 0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color: rgba(192, 132, 252, 0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a href="https://instagram.com/shattswrites" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color: rgba(232, 121, 249, 0.3);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <span>@shattswrites</span>
+          </a>
+        </div>
+
+        <div class="scroll-indicator">
+          <span>Explore</span>
+          <div class="scroll-mouse">
+            <div class="scroll-dot"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <nav>
+        <div class="nav-inner glass" id="navInner">
+          <button class="nav-btn active" data-section="about"><span class="emoji">✦</span><span class="label">About</span></button>
+          <button class="nav-btn" data-section="skills"><span class="emoji">◈</span><span class="label">Skills</span></button>
+          <button class="nav-btn" data-section="projects"><span class="emoji">🚀</span><span class="label">Projects</span></button>
+          <button class="nav-btn" data-section="experience"><span class="emoji">💼</span><span class="label">Experience</span></button>
+          <button class="nav-btn" data-section="achievements"><span class="emoji">🏆</span><span class="label">Awards</span></button>
+          <button class="nav-btn" data-section="approach"><span class="emoji">🧠</span><span class="label">Approach</span></button>
+        </div>
+      </nav>
+
+      <!-- About Section -->
+      <section id="about">
+        <div class="section-blur" style="width: 24rem; height: 24rem; background: rgba(168, 85, 247, 0.05); top: 50%; left: 0;"></div>
+        <div class="max-w-4xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: rotate 4s ease-in-out infinite;">✦</span>
+            <h2>About <span class="text-gradient">Me</span></h2>
+          </div>
+          <style>@keyframes rotate { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } }</style>
+
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="card glass-warm fade-in" style="animation-delay: 0.1s;">
+              <p style="font-size: 1.125rem; line-height: 1.8; color: rgba(248, 248, 252, 0.9);">
+                I'm an aspiring astrophysicist and JEE 2026 candidate passionate about space science, innovation, and analytical problem-solving. My journey combines rigorous academic preparation in
+                <span style="color: #a855f7; font-weight: 600;"> Physics, Chemistry, and Mathematics</span> with hands-on technical learning in Python and computational thinking.
+              </p>
+            </div>
+
+            <div class="card glass-cool fade-in" style="animation-delay: 0.2s;">
+              <p style="font-size: 1.125rem; line-height: 1.8; color: rgba(248, 248, 252, 0.9);">
+                Beyond academics, I bridge science and art through my poetry platform
+                <span style="color: #8b5cf6; font-weight: 700;"> @shattswrites</span>, where I've reached millions with emotionally resonant content. This unique combination of analytical and creative thinking shapes my approach to research and problem-solving.
+              </p>
+            </div>
+
+            <div class="animated-gradient-border fade-in" style="animation-delay: 0.3s;">
+              <div style="padding: 2rem; position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                  <span style="font-size: 1.5rem;">🎯</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: #e879f9;">Current Focus</h3>
+                </div>
+                <p style="color: rgba(248, 248, 252, 0.9); line-height: 1.7;">
+                  Building a strong PCM foundation for JEE 2026, learning Python for scientific applications, and contributing to citizen science through Zooniverse while developing content strategies that engage diverse audiences.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section id="skills">
+        <div class="section-blur" style="width: 20rem; height: 20rem; background: rgba(139, 92, 246, 0.05); top: 0; right: 0;"></div>
+        <div class="max-w-5xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: spin 20s linear infinite;">◈</span>
+            <h2>Technical <span class="text-gradient-cool">Skills</span></h2>
+          </div>
+          <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+
+          <div class="grid-2">
+            <div class="card glass fade-in" style="border-color: rgba(168, 85, 247, 0.2); animation-delay: 0.1s;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 1.875rem;">🔬</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: #a855f7;">Scientific & Analytical</h3>
+                </div>
+                <svg class="svg-icon svg-draw" width="48" height="48" viewBox="0 0 100 100" style="color: #a855f7;">
+                  <ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" style="animation-delay: 0.2s;"/>
+                  <ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(60 50 50)" style="animation-delay: 0.5s;"/>
+                  <ellipse cx="50" cy="50" rx="40" ry="15" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(120 50 50)" style="animation-delay: 0.8s;"/>
+                  <circle cx="50" cy="50" r="6" fill="currentColor" style="animation: fadeIn 0.5s ease 1s both;"/>
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="skill-item"><div class="skill-dot" style="background: #a855f7;"></div><span style="font-size: 0.875rem; font-weight: 500;">Physics, Chemistry, Mathematics</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #a855f7; animation-delay: 0.1s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Data Analysis</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #a855f7; animation-delay: 0.2s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Research Methodology</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #a855f7; animation-delay: 0.3s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Citizen Science (Zooniverse)</span></div>
+              </div>
+            </div>
+
+            <div class="card glass fade-in" style="border-color: rgba(139, 92, 246, 0.2); animation-delay: 0.2s;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 1.875rem;">💻</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: #8b5cf6;">Technical Skills</h3>
+                </div>
+                <svg class="svg-icon svg-draw" width="48" height="48" viewBox="0 0 100 80" style="color: #8b5cf6;">
+                  <path d="M30 10 L10 40 L30 70" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="animation-delay: 0.4s;"/>
+                  <path d="M70 10 L90 40 L70 70" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="animation-delay: 0.7s;"/>
+                  <path d="M55 15 L45 65" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation-delay: 1s;"/>
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="skill-item"><div class="skill-dot" style="background: #8b5cf6;"></div><span style="font-size: 0.875rem; font-weight: 500;">Python Programming</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #8b5cf6; animation-delay: 0.1s;"></div><span style="font-size: 0.875rem; font-weight: 500;">SQL & Streamlit</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #8b5cf6; animation-delay: 0.2s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Scientific Computing</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #8b5cf6; animation-delay: 0.3s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Git & GitHub</span></div>
+              </div>
+            </div>
+
+            <div class="card glass fade-in" style="border-color: rgba(192, 132, 252, 0.2); animation-delay: 0.3s;">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <span style="font-size: 1.875rem;">🎨</span>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: #c084fc;">Creative & Communication</h3>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="skill-item"><div class="skill-dot" style="background: #c084fc;"></div><span style="font-size: 0.875rem; font-weight: 500;">Content Strategy</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #c084fc; animation-delay: 0.1s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Creative Writing & Poetry</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #c084fc; animation-delay: 0.2s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Social Media Growth (1M+ reach)</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #c084fc; animation-delay: 0.3s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Logo Designing</span></div>
+              </div>
+            </div>
+
+            <div class="card glass fade-in" style="border-color: rgba(124, 58, 237, 0.2); animation-delay: 0.4s;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <span style="font-size: 1.875rem;">🌍</span>
+                  <h3 style="font-size: 1.25rem; font-weight: 700; color: #7c3aed;">Languages</h3>
+                </div>
+                <svg class="svg-icon svg-draw" width="48" height="48" viewBox="0 0 100 100" style="color: #7c3aed;">
+                  <path d="M20 30 L50 20 L80 35 L60 60 L30 70 L20 30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="animation-delay: 0.6s;"/>
+                  <circle cx="20" cy="30" r="4" fill="currentColor" style="animation: fadeIn 0.4s ease 1.1s both;"/>
+                  <circle cx="50" cy="20" r="4" fill="currentColor" style="animation: fadeIn 0.4s ease 1.3s both;"/>
+                  <circle cx="80" cy="35" r="4" fill="currentColor" style="animation: fadeIn 0.4s ease 1.5s both;"/>
+                  <circle cx="60" cy="60" r="4" fill="currentColor" style="animation: fadeIn 0.4s ease 1.7s both;"/>
+                  <circle cx="30" cy="70" r="4" fill="currentColor" style="animation: fadeIn 0.4s ease 1.9s both;"/>
+                </svg>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="skill-item"><div class="skill-dot" style="background: #7c3aed;"></div><span style="font-size: 0.875rem; font-weight: 500;">English (Native/Bilingual)</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #7c3aed; animation-delay: 0.1s;"></div><span style="font-size: 0.875rem; font-weight: 500;">Hindi (Native/Bilingual)</span></div>
+                <div class="skill-item"><div class="skill-dot" style="background: #7c3aed; animation-delay: 0.2s;"></div><span style="font-size: 0.875rem; font-weight: 500;">French (Elementary)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-4 fade-in" style="margin-top: 3rem; animation-delay: 0.5s;">
+            <div class="stat-card glass" style="border-color: rgba(168, 85, 247, 0.2);">
+              <div class="stat-value" style="color: #a855f7;">Aspirant</div>
+              <div class="stat-label">JEE 2026</div>
+            </div>
+            <div class="stat-card glass" style="border-color: rgba(139, 92, 246, 0.2);">
+              <div class="stat-value" style="color: #8b5cf6;">1M-3.2M+</div>
+              <div class="stat-label">Content Reach</div>
+            </div>
+            <div class="stat-card glass" style="border-color: rgba(192, 132, 252, 0.2);">
+              <div class="stat-value" style="color: #c084fc;">Active</div>
+              <div class="stat-label">Zooniverse</div>
+            </div>
+            <div class="stat-card glass" style="border-color: rgba(124, 58, 237, 0.2);">
+              <div class="stat-value" style="color: #7c3aed;">Learning</div>
+              <div class="stat-label">Python</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects">
+        <div class="section-blur" style="width: 24rem; height: 24rem; background: rgba(232, 121, 249, 0.05); bottom: 0; left: 25%;"></div>
+        <div class="max-w-5xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: float 2s ease-in-out infinite;">🚀</span>
+            <h2>Featured <span class="text-gradient">Projects</span></h2>
+          </div>
+          <style>@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }</style>
+          <p class="fade-in" style="font-size: 1.125rem; color: var(--muted-foreground); margin-bottom: 3.5rem; max-width: 42rem; animation-delay: 0.1s;">
+            Building practical applications and solving computational problems through code.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="project-card glass fade-in" style="border: 1px solid rgba(168, 85, 247, 0.2); animation-delay: 0.2s;">
+              <div class="project-header" onclick="toggleProject('rpg')">
+                <div style="flex: 1;">
+                  <div class="project-title">
+                    <span class="emoji">🎮</span>
+                    <h3>RPG Mini Game</h3>
+                  </div>
+                  <p class="project-tech" style="color: #a855f7;">Python | Streamlit | Game Logic Design</p>
+                  <p class="project-desc">A fun, interactive role-playing game originally built as a Python CLI project and transformed into a web app using Streamlit. Players create custom characters by distributing points across three stats — Strength, Intelligence, and Charisma — while uncovering three hidden legendary archetypes embedded in the game logic.</p>
+                </div>
+                <span class="project-chevron open" id="chevron-rpg" style="color: #a855f7;">›</span>
+              </div>
+              <div class="project-content open" id="content-rpg">
+                <p style="color: rgba(248, 248, 252, 0.8); margin-bottom: 2rem;">The project preserves the humor and personality of the original CLI version, featuring witty feedback, playful insults on failure, and a distinctive dot-based stat visualization.</p>
+                
+                <h4 style="color: #a855f7; font-weight: 700; margin-bottom: 1rem; font-size: 1.125rem;">How the game works:</h4>
+                <div class="project-list two-col" style="margin-bottom: 2rem;">
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>Players assign values to Strength, Intelligence, and Charisma</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>Each stat must be between 1 and 100</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>The total of all three stats must match a hidden target number</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>A hint is revealed every time the player fails</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>The game contains three legendary archetypes</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>Entering an exact stat combination unlocks a legendary character</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>Any other valid combination creates a Custom Build</span></div>
+                  <div class="project-list-item"><span style="color: #a855f7;">→</span><span>Incorrect totals trigger humorous, in-game insults</span></div>
+                </div>
+
+                <h4 style="color: #8b5cf6; font-weight: 700; margin-bottom: 1rem; font-size: 1.125rem;">What this demonstrates:</h4>
+                <div class="project-list" style="margin-bottom: 2rem;">
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Python programming (logic, validation, randomization)</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Interactive web application development using Streamlit</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Game logic design and user feedback systems</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Transitioning from CLI to web-based applications</span></div>
+                </div>
+
+                <div class="project-buttons">
+                  <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #a855f7cc);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Play Live Demo
+                  </a>
+                  <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-secondary glass" style="border-color: rgba(168, 85, 247, 0.4);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                    View Code
+                  </a>
+                </div>
+
+                <div style="padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(168, 85, 247, 0.1); font-size: 0.875rem;">
+                  <p><span style="color: #a855f7; font-weight: 700;">Skills:</span> <span style="color: var(--muted-foreground);">Python, Logical Reasoning, Game Logic Design, Streamlit</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="project-card glass fade-in" style="border: 1px solid rgba(139, 92, 246, 0.2); animation-delay: 0.3s;">
+              <div class="project-header" onclick="toggleProject('tasktracker')">
+                <div style="flex: 1;">
+                  <div class="project-title">
+                    <span class="emoji">📋</span>
+                    <h3>Task Tracker</h3>
+                  </div>
+                  <p class="project-tech" style="color: #8b5cf6;">Python | File Handling | CLI Application</p>
+                  <p class="project-desc">A beginner-friendly, console-based Python application designed to help users efficiently manage daily tasks. The project focuses on practical programming concepts and clean data handling, making it suitable for school and personal use.</p>
+                </div>
+                <span class="project-chevron" id="chevron-tasktracker" style="color: #8b5cf6;">›</span>
+              </div>
+              <div class="project-content" id="content-tasktracker">
+                <h4 style="color: #8b5cf6; font-weight: 700; margin-bottom: 1rem; font-size: 1.125rem;">Features:</h4>
+                <div class="project-list" style="margin-bottom: 2rem;">
+                  <div class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Add, update, and delete tasks</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Track task status, priority, and due dates</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Store and manage data using CSV files</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Simple, clean command-line interface</span></div>
+                </div>
+
+                <h4 style="color: #8b5cf6; font-weight: 700; margin-bottom: 1rem; font-size: 1.125rem;">What this demonstrates:</h4>
+                <div class="project-list" style="margin-bottom: 2rem;">
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Practical Python programming</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>File handling and data persistence</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>User interaction through a structured CLI</span></div>
+                  <div class="project-list-item"><span style="color: #8b5cf6;">✓</span><span>Extensible program design for future enhancements</span></div>
+                </div>
+
+                <div class="project-buttons">
+                  <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-secondary glass" style="border-color: rgba(139, 92, 246, 0.4);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                    View Code
+                  </a>
+                </div>
+
+                <div style="padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgba(139, 92, 246, 0.1); font-size: 0.875rem;">
+                  <p><span style="color: #8b5cf6; font-weight: 700;">Skills:</span> <span style="color: var(--muted-foreground);">Python, File Handling, Critical Thinking, Computer Literacy</span></p>
+                  <p style="margin-top: 0.5rem;"><span style="color: #8b5cf6; font-weight: 700;">Associated with:</span> <span style="color: var(--muted-foreground);">St. Teresa School</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card glass fade-in" style="margin-top: 4rem; padding: 2rem; animation-delay: 0.4s;">
+            <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+              <span>🔧</span> Technical Proficiencies
+            </h3>
+            <div class="grid-2">
+              <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(168, 85, 247, 0.1);">
+                <span style="color: #a855f7; font-weight: 700;">Languages:</span>
+                <span style="color: var(--muted-foreground);">Python, SQL</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(139, 92, 246, 0.1);">
+                <span style="color: #8b5cf6; font-weight: 700;">Libraries:</span>
+                <span style="color: var(--muted-foreground);">Streamlit</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(192, 132, 252, 0.1);">
+                <span style="color: #c084fc; font-weight: 700;">Tools:</span>
+                <span style="color: var(--muted-foreground);">Git, GitHub, VS Code, MySQL, Krita, Canva, Gimp, Notion</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(124, 58, 237, 0.1);">
+                <span style="color: #7c3aed; font-weight: 700;">Focus:</span>
+                <span style="color: var(--muted-foreground);">Scientific Computing, Data Analysis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Experience Section -->
+      <section id="experience">
+        <div class="section-blur" style="width: 20rem; height: 20rem; background: rgba(139, 92, 246, 0.05); top: 33%; right: 0;"></div>
+        <div class="max-w-5xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: sway 3s ease-in-out infinite;">💼</span>
+            <h2>Experience & <span class="text-gradient-cool">Journey</span></h2>
+          </div>
+          <style>@keyframes sway { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }</style>
+
+          <div class="timeline">
+            <div class="timeline-item fade-in-left" style="animation-delay: 0.1s;">
+              <div class="timeline-dot" style="background: #7c3aed;">🔭</div>
+              <div class="card glass" style="border: 1px solid rgba(124, 58, 237, 0.3);">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                  <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #7c3aed;">Zooniverse</h3>
+                    <p style="font-weight: 600;">Citizen Scientist</p>
+                  </div>
+                  <span style="font-size: 0.875rem; color: var(--muted-foreground); font-family: 'Space Grotesk', monospace; background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.75rem; border-radius: 9999px; width: fit-content;">January 2026 - Present</span>
+                </div>
+                <p style="color: var(--muted-foreground);">Contributing to scientific research through data classification and analysis projects in astronomy and other fields. Participating in collaborative research efforts that advance scientific understanding through crowdsourced data analysis.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item fade-in-right" style="animation-delay: 0.2s;">
+              <div class="timeline-dot" style="background: #a855f7;">✍️</div>
+              <div class="card glass" style="border: 1px solid rgba(168, 85, 247, 0.3);">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                  <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #a855f7;">Instagram - @shattswrites</h3>
+                    <p style="font-weight: 600;">Social Media Content Creator (Writer & Poet)</p>
+                  </div>
+                  <span style="font-size: 0.875rem; color: var(--muted-foreground); font-family: 'Space Grotesk', monospace; background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.75rem; border-radius: 9999px; width: fit-content;">September 2024 - Present</span>
+                </div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Create emotionally resonant micro-poetry and short sentences connecting with millions of viewers</span></li>
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Write full-length poems exploring themes of love, self-discovery, and human emotions</span></li>
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Achieved viral reach: multiple posts with <span style="color: #e879f9; font-weight: 700;">1M–3.2M+</span> views</span></li>
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Experiment with different poetic forms and storytelling techniques to grow audience engagement</span></li>
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Develop content strategy that balances creativity with data-driven insights</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="timeline-item fade-in-left" style="animation-delay: 0.3s;">
+              <div class="timeline-dot" style="background: #8b5cf6;">🎤</div>
+              <div class="card glass" style="border: 1px solid rgba(139, 92, 246, 0.3);">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                  <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #8b5cf6;">The Nalanda MUN</h3>
+                    <p style="font-weight: 600;">Secretariat Member</p>
+                  </div>
+                  <span style="font-size: 0.875rem; color: var(--muted-foreground); font-family: 'Space Grotesk', monospace; background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.75rem; border-radius: 9999px; width: fit-content;">June 2025 - September 2025</span>
+                </div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                  <li class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Managed and curated content for official MUN communications</span></li>
+                  <li class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Designed digital campaigns to enhance outreach and delegate participation</span></li>
+                  <li class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Oversaw social media strategy and promotional content</span></li>
+                  <li class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Collaborated with team to expand digital presence and recruit participants</span></li>
+                  <li class="project-list-item"><span style="color: #8b5cf6;">→</span><span>Contributed to planning and execution of event-related communications</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 6rem;" class="fade-in">
+            <div class="section-header" style="margin-bottom: 2.5rem;">
+              <span class="emoji" style="animation: float 2s ease-in-out infinite;">🎓</span>
+              <h2 style="font-size: 1.875rem;">Education</h2>
+            </div>
+
+            <div class="edu-grid">
+              <div class="edu-card glass-cool fade-in" style="animation-delay: 0.4s;">
+                <div class="edu-content">
+                  <span class="edu-emoji">🏫</span>
+                  <div>
+                    <h3 class="edu-title">St. Teresa School</h3>
+                    <p class="edu-period">2014 - 2026</p>
+                  </div>
+                </div>
+              </div>
+              <div class="edu-card glass-cool fade-in" style="animation-delay: 0.5s;">
+                <div class="edu-content">
+                  <span class="edu-emoji">💻</span>
+                  <div>
+                    <h3 class="edu-title">freeCodeCamp - Scientific Computing with Python</h3>
+                    <p class="edu-period">Certificate Program | May 2025 - December 2026</p>
+                    <p class="edu-desc">Developing computational thinking and Python programming skills for scientific applications and data analysis.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Achievements Section -->
+      <section id="achievements">
+        <div class="section-blur" style="width: 24rem; height: 24rem; background: rgba(232, 121, 249, 0.05); top: 0; left: 33%;"></div>
+        <div class="max-w-5xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: trophy 2s ease-in-out infinite;">🏆</span>
+            <h2>Achievements & <span class="text-gradient">Recognition</span></h2>
+          </div>
+          <style>@keyframes trophy { 0%, 100% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.15) rotate(5deg); } 75% { transform: scale(1.15) rotate(-5deg); } }</style>
+
+          <div class="grid-2" style="gap: 2rem;">
+            <div class="card glass-warm fade-in-left" style="animation-delay: 0.1s;">
+              <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem;">Awards & Recognition</h3>
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="award-item"><span class="award-emoji">🏅</span><span style="font-weight: 500;">Best Journalist Award – Gaurs MUN 2025</span><div class="award-dot" style="background: #c084fc;"></div></div>
+                <div class="award-item"><span class="award-emoji">🥇</span><span style="font-weight: 500;">Gold Medal & Trophy – Logo Designing</span><div class="award-dot" style="background: #a855f7;"></div></div>
+                <div class="award-item"><span class="award-emoji">🥇</span><span style="font-weight: 500;">Gold Medal – Social Work</span><div class="award-dot" style="background: #8b5cf6;"></div></div>
+                <div class="award-item"><span class="award-emoji">🎖️</span><span style="font-weight: 500;">Social and Group Development</span><div class="award-dot" style="background: #7c3aed;"></div></div>
+              </div>
+            </div>
+
+            <div class="card glass-cool fade-in-right" style="animation-delay: 0.2s;">
+              <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+                <span>📜</span> Certifications & Competitions
+              </h3>
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="cert-item"><div class="cert-dot" style="background: #a855f7;"></div><span style="font-weight: 500; color: #a855f7;">National Space Innovation Challenge – ISRO and AIM</span></div>
+                <div class="cert-item"><div class="cert-dot" style="background: #8b5cf6;"></div><span style="font-weight: 500; color: #8b5cf6;">SOF National Science Olympiad (NSO)</span></div>
+                <div class="cert-item"><div class="cert-dot" style="background: #c084fc;"></div><span style="font-weight: 500; color: #c084fc;">SOF National Cyber Olympiad (NCO)</span></div>
+                <div class="cert-item"><div class="cert-dot" style="background: #7c3aed;"></div><span style="font-weight: 500; color: #7c3aed;">NuTom Comprehensive Life Skills Olympiad – Associated with IIT Delhi</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="animated-gradient-border fade-in" style="margin-top: 2.5rem; animation-delay: 0.3s;">
+            <div style="padding: 2rem; position: relative; z-index: 1;">
+              <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+                <span style="animation: spin 10s linear infinite;">📊</span>
+                Impact Metrics
+              </h3>
+              <div class="grid-2" style="gap: 1.5rem;">
+                <div class="metric-item"><span class="metric-emoji">📈</span><p>Content reach: <span style="color: #e879f9; font-weight: 700;">1M–3.2M+ views</span> on individual posts</p></div>
+                <div class="metric-item"><span class="metric-emoji">🌟</span><p>Growing audience engagement across poetry and science communication</p></div>
+                <div class="metric-item"><span class="metric-emoji">🔬</span><p>Active participation in citizen science contributing to real research</p></div>
+                <div class="metric-item"><span class="metric-emoji">🏆</span><p>Multi-disciplinary recognition in science, arts, and journalism</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Problem-Solving Approach Section -->
+      <section id="approach">
+        <div class="section-blur" style="width: 20rem; height: 20rem; background: rgba(168, 85, 247, 0.05); bottom: 25%; right: 0;"></div>
+        <div class="max-w-5xl">
+          <div class="section-header fade-in">
+            <span class="emoji" style="animation: pulse 2s ease-in-out infinite;">🧠</span>
+            <h2>Problem-Solving <span class="text-gradient-cool">Approach</span></h2>
+          </div>
+          <p class="fade-in" style="font-size: 1.125rem; color: var(--muted-foreground); margin-bottom: 3.5rem; max-width: 42rem; animation-delay: 0.1s;">
+            My approach to tackling challenges combines analytical rigor with creative thinking:
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 5rem;">
+            <div class="approach-item glass fade-in-left" style="animation-delay: 0.1s;" onmouseenter="this.querySelector('.approach-number').style.color='#a855f7'; this.querySelector('.approach-title').style.color='#a855f7';" onmouseleave="this.querySelector('.approach-number').style.color='rgba(255,255,255,0.1)'; this.querySelector('.approach-title').style.color='#f8f8fc';">
+              <div class="approach-header">
+                <span class="approach-number">01</span>
+                <div>
+                  <h3 class="approach-title">Interdisciplinary Thinking</h3>
+                  <p class="approach-content">I don't see boundaries between science and art. My experience creating viral poetry teaches me audience psychology, while my physics and math training gives me systematic problem-solving frameworks. This combination allows me to approach problems from multiple angles.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="approach-item glass fade-in-left" style="animation-delay: 0.2s;" onmouseenter="this.querySelector('.approach-number').style.color='#8b5cf6'; this.querySelector('.approach-title').style.color='#8b5cf6';" onmouseleave="this.querySelector('.approach-number').style.color='rgba(255,255,255,0.1)'; this.querySelector('.approach-title').style.color='#f8f8fc';">
+              <div class="approach-header">
+                <span class="approach-number">02</span>
+                <div>
+                  <h3 class="approach-title">Data-Driven & Intuitive</h3>
+                  <p class="approach-content">Through citizen science work and content creation, I've learned to balance quantitative analysis with qualitative insights. Whether analyzing astronomical data or engagement metrics, I look for patterns while staying open to unexpected discoveries.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="approach-item glass fade-in-left" style="animation-delay: 0.3s;" onmouseenter="this.querySelector('.approach-number').style.color='#c084fc'; this.querySelector('.approach-title').style.color='#c084fc';" onmouseleave="this.querySelector('.approach-number').style.color='rgba(255,255,255,0.1)'; this.querySelector('.approach-title').style.color='#f8f8fc';">
+              <div class="approach-header">
+                <span class="approach-number">03</span>
+                <div>
+                  <h3 class="approach-title">Iterative Learning</h3>
+                  <p class="approach-content">My journey with Python and scientific computing reflects my approach: start with fundamentals, build incrementally, test frequently, and refine based on results. I apply this whether coding algorithms, solving physics problems, or crafting content.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="approach-item glass fade-in-left" style="animation-delay: 0.4s;" onmouseenter="this.querySelector('.approach-number').style.color='#7c3aed'; this.querySelector('.approach-title').style.color='#7c3aed';" onmouseleave="this.querySelector('.approach-number').style.color='rgba(255,255,255,0.1)'; this.querySelector('.approach-title').style.color='#f8f8fc';">
+              <div class="approach-header">
+                <span class="approach-number">04</span>
+                <div>
+                  <h3 class="approach-title">Collaborative & Communicative</h3>
+                  <p class="approach-content">From MUN secretariat work to citizen science projects, I've learned that complex problems require teamwork. I focus on clear communication, whether explaining technical concepts or coordinating campaigns, making sure ideas are accessible to diverse audiences.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="approach-item glass fade-in-left" style="animation-delay: 0.5s;" onmouseenter="this.querySelector('.approach-number').style.color='#e879f9'; this.querySelector('.approach-title').style.color='#e879f9';" onmouseleave="this.querySelector('.approach-number').style.color='rgba(255,255,255,0.1)'; this.querySelector('.approach-title').style.color='#f8f8fc';">
+              <div class="approach-header">
+                <span class="approach-number">05</span>
+                <div>
+                  <h3 class="approach-title">Research-Oriented Mindset</h3>
+                  <p class="approach-content">My participation in national competitions (ISRO challenges, Science Olympiads) and geospatial programs has cultivated a research mindset: asking the right questions, finding reliable sources, validating assumptions, and documenting findings systematically.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="case-study animated-gradient-border fade-in" style="animation-delay: 0.6s;">
+            <div style="position: relative; z-index: 1;">
+              <h3>Case Study: <span class="text-gradient">Bridging Reach & Resonance</span></h3>
+              
+              <div class="case-section">
+                <h4 style="color: #a855f7;">Challenge:</h4>
+                <p style="font-size: 1.125rem;">Growing a poetry platform from zero to millions of views.</p>
+              </div>
+
+              <div class="case-section">
+                <h4 style="color: #8b5cf6;">Approach:</h4>
+                <ul class="case-list">
+                  <li><span style="color: #8b5cf6; font-weight: 700;">•</span><span>Analyzed what makes content emotionally resonant (qualitative)</span></li>
+                  <li><span style="color: #8b5cf6; font-weight: 700;">•</span><span>Tracked engagement patterns and optimal posting times (quantitative)</span></li>
+                  <li><span style="color: #8b5cf6; font-weight: 700;">•</span><span>Experimented with different formats while maintaining authentic voice</span></li>
+                  <li><span style="color: #8b5cf6; font-weight: 700;">•</span><span>Iterated based on feedback and performance data</span></li>
+                  <li><span style="color: #8b5cf6; font-weight: 700;">•</span><span>Applied similar analytical thinking to other domains including scientific communication</span></li>
+                </ul>
+              </div>
+
+              <div class="case-result">
+                <h4 style="color: #e879f9;">Result:</h4>
+                <p style="line-height: 1.7;">Created a sustainable content strategy that balances creativity with strategic growth, teaching me skills applicable to research communication and scientific outreach.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-content">
+          <div class="footer-top">
+            <div class="footer-info fade-in">
+              <h3 class="footer-name">
+                <span>Shatakshita</span> <span class="text-gradient">Shekhar</span>
+              </h3>
+              <p class="footer-desc">Open to research opportunities, internships, and collaborative projects</p>
+            </div>
+
+            <div class="footer-links fade-in" style="animation-delay: 0.1s;">
+              <a href="mailto:shekhar.shatakshita@gmail.com" class="footer-link glass" style="border-color: rgba(168, 85, 247, 0.3);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color: rgba(139, 92, 246, 0.3);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </a>
+              <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color: rgba(192, 132, 252, 0.3);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+              </a>
+              <a href="https://instagram.com/shattswrites" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color: rgba(232, 121, 249, 0.3);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-bottom fade-in" style="animation-delay: 0.2s;">
+            <p class="footer-copy">
+              © 2026 Shatakshita Shekhar. Built with
+              <span class="footer-heart">♥</span>
+              for science and creativity
+            </p>
+            <button class="back-to-top glass" onclick="scrollToTopWithWarp()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+              Back to top
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Interactive Constellation
+    const canvas = document.getElementById('constellation-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: -1000, y: -1000 };
+    const particleCount = 80;
+    const connectionDistance = 120;
+    const mouseRadius = 180;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          radius: Math.random() * 2 + 1,
+          baseX: x,
+          baseY: y
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(particle => {
+        const dx = mouse.x - particle.x;
+        const dy = mouse.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < mouseRadius) {
+          const force = (mouseRadius - distance) / mouseRadius;
+          const angle = Math.atan2(dy, dx);
+          particle.vx -= Math.cos(angle) * force * 0.5;
+          particle.vy -= Math.sin(angle) * force * 0.5;
+        }
+
+        particle.vx += (particle.baseX - particle.x) * 0.01;
+        particle.vy += (particle.baseY - particle.y) * 0.01;
+        particle.vx *= 0.95;
+        particle.vy *= 0.95;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = canvas.height;
+        if (particle.y > canvas.height) particle.y = 0;
+      });
+
+      // Draw connections
+      particles.forEach((particle, i) => {
+        const distToMouse = Math.sqrt((mouse.x - particle.x) ** 2 + (mouse.y - particle.y) ** 2);
+        const isNearMouse = distToMouse < mouseRadius * 1.5;
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const other = particles[j];
+          const dx = particle.x - other.x;
+          const dy = particle.y - other.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          const distOtherToMouse = Math.sqrt((mouse.x - other.x) ** 2 + (mouse.y - other.y) ** 2);
+          const otherNearMouse = distOtherToMouse < mouseRadius * 1.5;
+
+          if (distance < connectionDistance && (isNearMouse || otherNearMouse)) {
+            const opacity = (1 - distance / connectionDistance) * 0.6;
+            const gradient = ctx.createLinearGradient(particle.x, particle.y, other.x, other.y);
+            gradient.addColorStop(0, `rgba(168, 85, 247, ${opacity})`);
+            gradient.addColorStop(0.5, `rgba(192, 132, 252, ${opacity * 1.2})`);
+            gradient.addColorStop(1, `rgba(139, 92, 246, ${opacity})`);
+
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = opacity * 2;
+            ctx.stroke();
+          }
+        }
+      });
+
+      // Draw particles
+      particles.forEach(particle => {
+        const distToMouse = Math.sqrt((mouse.x - particle.x) ** 2 + (mouse.y - particle.y) ** 2);
+        const glowIntensity = distToMouse < mouseRadius ? (1 - distToMouse / mouseRadius) * 0.8 : 0;
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+
+        if (glowIntensity > 0) {
+          const glow = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, particle.radius * 4);
+          glow.addColorStop(0, `rgba(192, 132, 252, ${0.8 + glowIntensity})`);
+          glow.addColorStop(0.5, `rgba(168, 85, 247, ${0.3 * glowIntensity})`);
+          glow.addColorStop(1, 'transparent');
+          ctx.fillStyle = glow;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.radius * 1.5, 0, Math.PI * 2);
+        }
+
+        ctx.fillStyle = glowIntensity > 0 ? `rgba(232, 121, 249, ${0.6 + glowIntensity * 0.4})` : 'rgba(168, 85, 247, 0.4)';
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
+    resizeCanvas();
+    animate();
+
+    // Parallax orbs
+    const parallaxOrbs = document.getElementById('parallaxOrbs');
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      parallaxOrbs.style.transform = `translate3d(0, ${scrollY * -0.03}px, 0)`;
+    }, { passive: true });
+
+    // Warp transition
+    const warpOverlay = document.getElementById('warpOverlay');
+    const warpContainer = document.getElementById('warpContainer');
+
+    function triggerWarp() {
+      warpOverlay.classList.add('active');
+      warpContainer.classList.add('warping');
+      setTimeout(() => {
+        warpOverlay.classList.remove('active');
+        warpContainer.classList.remove('warping');
+      }, 300);
+    }
+
+    // Navigation
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const navInner = document.getElementById('navInner');
+
+    navBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        triggerWarp();
+        const section = btn.dataset.section;
+        navBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setTimeout(() => {
+          const el = document.getElementById(section);
+          if (el) {
+            const offset = 120;
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+          }
+        }, 100);
+      });
+    });
+
+    // Scroll spy
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      navInner.classList.toggle('scrolled', scrollY > 100);
+
+      const sections = ['about', 'skills', 'projects', 'experience', 'achievements', 'approach'];
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollY + 200) {
+          navBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.section === sections[i]);
+          });
+          break;
+        }
+      }
+    });
+
+    // Project toggle
+    function toggleProject(id) {
+      const content = document.getElementById('content-' + id);
+      const chevron = document.getElementById('chevron-' + id);
+      content.classList.toggle('open');
+      chevron.classList.toggle('open');
+    }
+
+    // Back to top
+    function scrollToTopWithWarp() {
+      triggerWarp();
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    }
+
+    // Intersection Observer for animations
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
