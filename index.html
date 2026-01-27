@@ -32,6 +32,34 @@
     }
     ::selection { background: #a855f7; color: #0a0a14; }
 
+    #constellation-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.8;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 1;
+      top: 0;
+      left: 0;
+    }
+
+    .warp-container {
+      position: relative;
+      z-index: 10;
+    }
+
     .text-gradient {
       background: linear-gradient(135deg, #a855f7 0%, #c084fc 50%, #e879f9 100%);
       -webkit-background-clip: text;
@@ -98,16 +126,6 @@
       75% { transform: translate(-50px, -20px) scale(1.05); }
     }
 
-    .grid-overlay {
-      position: fixed;
-      inset: 0;
-      background-image: linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
-      background-size: 80px 80px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    #constellation-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.8; }
     .parallax-orbs { position: fixed; inset: 0; pointer-events: none; overflow: hidden; will-change: transform; }
 
     .warp-overlay {
@@ -172,6 +190,7 @@
     @media (min-width: 640px) { .nav-btn span.label { display: inline; } }
 
     section { padding: 8rem 1.5rem; position: relative; }
+    @media (min-width: 1024px) { section { padding: 10rem 1.5rem; } }
     .section-blur {
       position: absolute;
       border-radius: 50%;
@@ -184,12 +203,30 @@
 
     .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3.5rem; }
     .section-header .emoji { font-size: 3rem; }
-    .section-header h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; }
+    .section-header h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.02em; }
+
+    h1, h2, h3, h4, h5, h6 { letter-spacing: -0.02em; }
 
     .card {
       padding: 2rem;
       border-radius: 1.5rem;
-      transition: all 0.5s ease;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent, rgba(168, 85, 247, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .card:hover::before {
+      opacity: 1;
     }
     .card:hover { transform: translateY(-5px) scale(1.02); }
 
@@ -205,10 +242,15 @@
       padding: 0.75rem;
       border-radius: 0.75rem;
       background: rgba(255, 255, 255, 0.02);
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: default;
     }
-    .skill-item:hover { transform: translateX(8px); background: rgba(255, 255, 255, 0.05); }
+    .skill-item:hover {
+      transform: translateX(8px);
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 2px solid currentColor;
+      padding-left: calc(0.75rem - 2px);
+    }
     .skill-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
 
@@ -255,13 +297,34 @@
     }
     @media (min-width: 768px) { .timeline-dot { left: 50%; transform: translateX(-50%); } }
 
-    .project-card { border-radius: 1.5rem; overflow: hidden; }
-    .project-header { padding: 2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; cursor: pointer; }
+    .project-card {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .project-card:hover {
+      box-shadow: 0 20px 60px rgba(168, 85, 247, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .project-header {
+      padding: 2rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .project-header:hover {
+      background: rgba(168, 85, 247, 0.05);
+    }
+
     .project-title { display: flex; align-items: center; gap: 1rem; }
     .project-title .emoji { font-size: 2.5rem; }
     .project-title h3 { font-size: 1.5rem; font-weight: 700; }
     .project-tech { font-size: 0.875rem; font-family: "Space Grotesk", monospace; margin-top: 0.75rem; }
-    .project-desc { color: var(--muted-foreground); margin-top: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .project-desc { color: var(--muted-foreground); margin-top: 1rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .project-chevron { font-size: 2rem; transition: transform 0.3s ease; }
     .project-chevron.open { transform: rotate(90deg); }
     .project-content { padding: 0 2rem 2rem; border-top: 1px solid rgba(168, 85, 247, 0.1); display: none; }
@@ -270,6 +333,7 @@
     @media (min-width: 768px) { .project-list.two-col { grid-template-columns: repeat(2, 1fr); } }
     .project-list-item { display: flex; align-items: flex-start; gap: 0.75rem; color: var(--muted-foreground); }
     .project-buttons { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -278,14 +342,38 @@
       border-radius: 0.75rem;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border: none;
       cursor: pointer;
     }
-    .btn-primary { color: #0a0a14; }
-    .btn-primary:hover { transform: scale(1.05) translateY(-2px); }
-    .btn-secondary { background: transparent; }
-    .btn-secondary:hover { transform: scale(1.05) translateY(-2px); }
+    .btn:focus-visible {
+      outline: 2px solid #a855f7;
+      outline-offset: 2px;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      color: #0a0a14;
+      background: linear-gradient(135deg, #a855f7, #c084fc);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    }
+    .btn-primary:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid rgba(168, 85, 247, 0.4);
+      color: #a855f7;
+    }
+    .btn-secondary:hover {
+      transform: scale(1.05) translateY(-2px);
+      background: rgba(168, 85, 247, 0.1);
+      border-color: rgba(168, 85, 247, 0.8);
+    }
 
     .award-item {
       display: flex;
@@ -389,12 +477,12 @@
     .hero-link:hover svg { transform: scale(1.1); }
     .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.75rem; animation: fadeIn 1s ease 2s both; }
     @media (max-width: 768px) {
-  .scroll-indicator {
-    position: static;
-    margin-top: 2rem;
-    transform: none;
-  }
-}
+      .scroll-indicator {
+        position: static;
+        margin-top: 2rem;
+        transform: none;
+      }
+    }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .scroll-indicator span { font-size: 0.75rem; color: var(--muted-foreground); font-family: "Space Grotesk", monospace; letter-spacing: 0.3em; text-transform: uppercase; }
@@ -464,25 +552,45 @@
     @keyframes drawSVG { to { stroke-dashoffset: 0; } }
     .svg-icon { opacity: 0.3; }
 
-    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
-    .fade-in-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     .fade-in-left.visible { opacity: 1; transform: translateX(0); }
-    .fade-in-right { opacity: 0; transform: translateX(40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in-right { opacity: 0; transform: translateX(40px); transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
     .fade-in-right.visible { opacity: 1; transform: translateX(0); }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(168, 85, 247, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #a855f7, #8b5cf6);
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #c084fc, #a855f7);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <div class="warp-overlay" id="warpOverlay"></div>
-  <div class="warp-container" id="warpContainer">
-    <canvas id="constellation-canvas"></canvas>
-    <div class="grid-overlay"></div>
-    <div class="parallax-orbs" id="parallaxOrbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
+  <canvas id="constellation-canvas"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="parallax-orbs" id="parallaxOrbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
 
+  <div class="warp-container" id="warpContainer">
     <div style="position: relative; z-index: 10;">
       <!-- Hero Section -->
       <section id="hero">
@@ -686,7 +794,7 @@
               <div class="stat-label">Content Reach</div>
             </div>
             <div class="stat-card glass" style="border-color: rgba(192, 132, 252, 0.2);">
-              <div class="stat-value" style="color: #c084fc;">Active</div>
+              <div class="stat-value" style="color: #c084fc;">Citizen Scientist</div>
               <div class="stat-label">Zooniverse</div>
             </div>
             <div class="stat-card glass" style="border-color: rgba(124, 58, 237, 0.2);">
@@ -747,7 +855,7 @@
                 </div>
 
                 <div class="project-buttons">
-                  <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background: linear-gradient(135deg, #a855f7, #a855f7cc);">
+                  <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     Play Live Demo
                   </a>
@@ -874,6 +982,7 @@
                   <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Achieved viral reach: multiple posts with <span style="color: #e879f9; font-weight: 700;">1M–3.2M+</span> views</span></li>
                   <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Experiment with different poetic forms and storytelling techniques to grow audience engagement</span></li>
                   <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Develop content strategy that balances creativity with data-driven insights</span></li>
+                  <li class="project-list-item"><span style="color: #a855f7;">→</span><span>Currently inactive due to academic commitments.</span></li>
                 </ul>
               </div>
             </div>
@@ -1074,6 +1183,89 @@
         </div>
       </section>
 
+      <!-- Add this new section after the Approach section, before Footer -->
+
+      <!-- Contact CTA Section -->
+      <section style="padding: 8rem 1.5rem; position: relative; overflow: hidden;">
+        <div class="section-blur" style="width: 28rem; height: 28rem; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.1)); top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+        
+        <div class="max-w-4xl" style="position: relative; z-index: 2;">
+          <div class="animated-gradient-border fade-in">
+            <div style="padding: 4rem 2rem; position: relative; z-index: 1;">
+              <h2 style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
+                Let's Build <span class="text-gradient">Something Amazing</span>
+              </h2>
+              
+              <p style="font-size: 1.125rem; color: var(--muted-foreground); text-align: center; margin-bottom: 3rem; line-height: 1.8;">
+                Whether you're looking for a collaborator on space science projects, need help with scientific computing, or want to discuss astrophysics and research—I'm excited to connect.
+              </p>
+
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 2rem;">
+                <a href="mailto:shekhar.shatakshita@gmail.com" class="btn btn-primary" style="font-size: 1rem; padding: 1rem 2rem;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  Get In Touch
+                </a>
+                <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="btn btn-secondary glass" style="font-size: 1rem; padding: 1rem 2rem; border-color: rgba(168, 85, 247, 0.4);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                  Connect on LinkedIn
+                </a>
+              </div>
+
+              <p style="text-align: center; color: rgba(144, 144, 160, 0.8); font-size: 0.875rem; font-family: 'Space Grotesk', monospace;">
+                💡 Open to: Internships • Research Collaborations • Science Communication • Citizen Science Projects
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Facts Section -->
+      <section style="padding: 6rem 1.5rem; position: relative; background: linear-gradient(to bottom, transparent, rgba(168, 85, 247, 0.03));">
+        <div class="max-w-5xl">
+          <div class="section-header fade-in" style="justify-content: center; text-align: center;">
+            <h2 style="font-size: 1.5rem; font-weight: 700;">Quick Facts About Me</h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+            <div class="card glass fade-in" style="border: 1px solid rgba(168, 85, 247, 0.2); text-align: center; animation-delay: 0.1s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🌍</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Location</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">Ghaziabad, Uttar Pradesh, India</p>
+            </div>
+
+            <div class="card glass fade-in" style="border: 1px solid rgba(139, 92, 246, 0.2); text-align: center; animation-delay: 0.2s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🎯</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Current Goal</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">JEE 2026 Preparation & Research</p>
+            </div>
+
+            <div class="card glass fade-in" style="border: 1px solid rgba(192, 132, 252, 0.2); text-align: center; animation-delay: 0.3s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">⏰</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Response Time</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">Within 24-48 hours</p>
+            </div>
+
+            <div class="card glass fade-in" style="border: 1px solid rgba(124, 58, 237, 0.2); text-align: center; animation-delay: 0.4s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔬</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Main Interest</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">Astrophysics & Space Science</p>
+            </div>
+
+            <div class="card glass fade-in" style="border: 1px solid rgba(232, 121, 249, 0.2); text-align: center; animation-delay: 0.5s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">✍️</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Passion</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">Poetry & Science Communication</p>
+            </div>
+
+            <div class="card glass fade-in" style="border: 1px solid rgba(168, 85, 247, 0.2); text-align: center; animation-delay: 0.6s;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🤝</div>
+              <h4 style="font-weight: 700; margin-bottom: 0.5rem;">Collaboration Style</h4>
+              <p style="color: var(--muted-foreground); font-size: 0.875rem;">Team-oriented & Communicative</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Footer -->
       <footer>
         <div class="footer-content">
@@ -1234,6 +1426,7 @@
       requestAnimationFrame(animate);
     }
 
+    window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
     window.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
