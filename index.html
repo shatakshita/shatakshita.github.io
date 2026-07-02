@@ -4,1148 +4,1401 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shatakshita Shekhar | Aerospace Engineering & Cosmology</title>
-  <meta name="description" content="Aerospace Engineering student at SRM Institute of Science and Technology (SRMIST), founder of The Redshift Asterism, Research Intern at ExoVista, and science communicator exploring cosmology, astrophysics, and space technology.">
+  <meta name="description" content="Aerospace Engineering student at SRMIST, Research Intern at ExoVista, and founder of The Redshift Asterism — exploring cosmology, astrophysics, and space technology.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #0a0a14;
-      --fg: #f8f8fc;
-      --muted: #9090a0;
-      --c1: #a855f7;
-      --c2: #8b5cf6;
-      --c3: #c084fc;
-      --c4: #7c3aed;
-      --c5: #e879f9;
+      --bg:  #07080f;
+      --bg2: #0d0f1c;
+      --bg3: #111525;
+      --fg:  #eeeef5;
+      --fg2: #9898b2;
+      --fg3: #5a5a72;
+      --c1:  #a855f7;
+      --c2:  #8b5cf6;
+      --c3:  #c084fc;
+      --c4:  #7c3aed;
+      --c5:  #e879f9;
+      --b1:  rgba(168,85,247,.12);
+      --b2:  rgba(168,85,247,.22);
     }
 
-    /* ---- RESET & BASE ---- */
+    /* ── BASE ─────────────────────────────── */
     html { scroll-behavior: smooth; overflow-x: hidden; width: 100%; }
     body {
       font-family: "Outfit", sans-serif;
-      background: var(--bg);
-      color: var(--fg);
-      line-height: 1.6;
+      background: var(--bg); color: var(--fg);
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      width: 100%;
-      max-width: 100%;
-      position: relative;
+      overflow-x: hidden; width: 100%;
+      /* Hide native cursor everywhere */
+      cursor: none !important;
     }
-    /* Nuclear mobile overflow fix — nothing escapes the viewport */
-    body > * { max-width: 100%; overflow-x: hidden; }
-    /* Prevent wide inline content on small screens */
-    img, svg, canvas, video { max-width: 100%; height: auto; }
-    ::selection { background: #a855f7; color: #0a0a14; }
+    /* Restore cursor on touch so mobile works fine */
+    @media (hover: none) { body { cursor: auto !important; } }
+    * { cursor: inherit !important; }
+    @media (hover: none) { * { cursor: auto !important; } }
+    body > * { max-width: 100%; }
+    img, svg, canvas, video { max-width: 100%; }
+    ::selection { background: var(--c1); color: var(--bg); }
 
-    /* ---- FIXED BG LAYERS ---- */
-    #constellation-canvas {
-      position: fixed; inset: 0; pointer-events: none;
-      z-index: 0; opacity: 0.75; width: 100%; height: 100%;
+    /* ── ORBITAL CURSOR ──────────────────────
+       A small orbital system that lives near the
+       pointer. Satellite travels an elliptical
+       path continuously; on hover the period
+       contracts (tighter gravity well); on click
+       a periapsis flash fires.
+    ─────────────────────────────────────────── */
+    #oc-wrap {
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 999999;
+      /* We move this via transform in JS */
+      will-change: transform;
+      /* Hidden until first mousemove */
+      opacity: 0;
+      transition: opacity .4s ease;
     }
+    #oc-wrap.visible { opacity: 1; }
+
+    /* The SVG itself is centered on origin; JS translates the wrapper */
+    #oc-svg {
+      position: absolute;
+      /* Center the SVG so (0,0) is at the cursor tip */
+      left: -50px; top: -50px;
+      width: 100px; height: 100px;
+      overflow: visible;
+    }
+
+    /* ── STARFIELD ───────────────────────── */
+    #starfield {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 1; pointer-events: none;
+    }
+
+    /* ── SUBTLE GRID ─────────────────────── */
     .grid-overlay {
-      position: fixed; inset: 0;
-      background-image: linear-gradient(rgba(168,85,247,.03) 1px,transparent 1px),
-                        linear-gradient(90deg,rgba(168,85,247,.03) 1px,transparent 1px);
-      background-size: 80px 80px; pointer-events: none; z-index: 1;
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(168,85,247,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.018) 1px, transparent 1px);
+      background-size: 72px 72px;
     }
-    .parallax-orbs { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-    .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .45; pointer-events: none; }
-    .orb-1 { width: min(600px,100vw); height: min(600px,100vw); background: radial-gradient(circle,rgba(168,85,247,.35) 0%,transparent 70%); top:-10%; left:-10%; animation: orbFloat 20s ease-in-out infinite; }
-    .orb-2 { width: min(500px,90vw); height: min(500px,90vw); background: radial-gradient(circle,rgba(139,92,246,.3) 0%,transparent 70%); top:40%; right:-10%; animation: orbFloat 20s ease-in-out infinite -7s; }
-    .orb-3 { width: min(400px,80vw); height: min(400px,80vw); background: radial-gradient(circle,rgba(192,132,252,.25) 0%,transparent 70%); bottom:10%; left:20%; animation: orbFloat 20s ease-in-out infinite -14s; }
-    @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 25%{transform:translate(40px,-25px) scale(1.08)} 50%{transform:translate(-25px,40px) scale(.95)} 75%{transform:translate(-40px,-15px) scale(1.04)} }
 
-    /* ---- WARP ---- */
-    .warp-overlay { position:fixed; inset:0; pointer-events:none; z-index:9999; background:radial-gradient(circle at center,rgba(168,85,247,.15) 0%,transparent 70%); opacity:0; transition:opacity .15s ease; }
-    .warp-overlay.active { opacity:1; }
-    .warp-container { position:relative; z-index:10; transition:filter .2s ease,transform .2s ease; width:100%; overflow-x:hidden; }
-    .warp-container.warping { filter:blur(2px) brightness(1.2) saturate(1.3); transform:scale(1.005); }
+    /* ── WARP ────────────────────────────── */
+    .warp-container {
+      position: relative; z-index: 10;
+      width: 100%; overflow-x: hidden;
+      transition: filter .22s ease, transform .22s ease;
+    }
+    .warp-container.warping {
+      filter: blur(1.5px) brightness(1.1) saturate(1.15);
+      transform: scale(1.002);
+    }
 
-    /* ---- NAV ---- */
+    /* ── NAV ─────────────────────────────── */
     nav {
       position: sticky; top: .75rem; z-index: 50;
       margin: 0 auto 4rem;
-      /* prevent nav from causing overflow */
-      width: calc(100% - 2rem);
-      max-width: 56rem;
-      animation: slideDown .8s ease-out;
+      width: calc(100% - 2rem); max-width: 60rem;
+      animation: slideDown .8s ease-out both;
     }
-    @keyframes slideDown { from{opacity:0;transform:translateY(-80px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideDown { from{opacity:0;transform:translateY(-50px)} to{opacity:1;transform:translateY(0)} }
     .nav-inner {
-      display: flex; align-items: center; gap: .15rem; padding: .4rem;
-      border-radius: 1rem;
-      background: rgba(22,22,38,.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(168,85,247,.15); box-shadow: 0 10px 40px rgba(0,0,0,.35);
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      /* no hard width — it wraps inside the nav container */
+      display: flex; align-items: center; gap: .1rem; padding: .32rem;
+      border-radius: .875rem;
+      background: rgba(10,10,20,.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(168,85,247,.16);
+      box-shadow: 0 8px 32px rgba(0,0,0,.45), 0 0 0 1px rgba(168,85,247,.04);
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
     }
     .nav-inner::-webkit-scrollbar { display: none; }
-    .nav-inner.scrolled { box-shadow: 0 20px 50px rgba(0,0,0,.4),0 0 30px rgba(168,85,247,.12); }
     .nav-btn {
-      position: relative; padding: .45rem .6rem; font-size: .75rem; font-weight: 500;
-      border-radius: .6rem; border: none; background: transparent;
-      color: var(--muted); cursor: pointer; transition: all .3s ease;
-      display: flex; align-items: center; gap: .3rem; white-space: nowrap; flex-shrink: 0;
+      position: relative; padding: .42rem .55rem; font-size: .72rem; font-weight: 500;
+      border-radius: .55rem; border: none; background: transparent;
+      color: var(--fg3); white-space: nowrap; flex-shrink: 0;
+      display: flex; align-items: center; gap: .28rem;
+      transition: color .2s;
     }
     .nav-btn:hover { color: var(--fg); }
     .nav-btn.active { color: #fff; }
-    .nav-btn.active::before { content:""; position:absolute; inset:0; border-radius:.6rem; background:linear-gradient(to right,#a855f7,#8b5cf6); z-index:-1; }
-    .nav-btn .label { display: none; }
-    @media(min-width:520px) { .nav-btn { padding:.5rem .8rem; font-size:.8rem; } .nav-btn .label { display:inline; } }
-    @media(min-width:900px) { .nav-btn { padding:.55rem .95rem; font-size:.85rem; } }
+    .nav-btn.active::before {
+      content: ""; position: absolute; inset: 0; border-radius: .55rem;
+      background: linear-gradient(to right, var(--c1), var(--c4)); z-index: -1;
+    }
+    .nav-btn .lbl { display: none; }
+    @media(min-width:500px) { .nav-btn { padding:.44rem .72rem; font-size:.74rem; } .nav-btn .lbl { display:inline; } }
+    @media(min-width:880px) { .nav-btn { padding:.48rem .88rem; font-size:.78rem; } }
 
-    /* ---- LAYOUT ---- */
-    section { padding: 6rem 1.25rem; position: relative; overflow: hidden; }
+    /* ── LAYOUT ──────────────────────────── */
+    section { padding: 5.5rem 1.25rem; position: relative; overflow: hidden; }
     @media(min-width:768px) { section { padding: 7rem 2rem; } }
-    @media(min-width:1024px) { section { padding: 9rem 2rem; } }
-    .max-w-4xl { max-width: 56rem; margin: 0 auto; width: 100%; }
-    .max-w-5xl { max-width: 64rem; margin: 0 auto; width: 100%; }
-    .section-blur { position:absolute; border-radius:50%; filter:blur(100px); pointer-events:none; z-index:0; }
+    @media(min-width:1024px) { section { padding: 8.5rem 2rem; } }
+    .w4 { max-width: 54rem; margin: 0 auto; width: 100%; }
+    .w5 { max-width: 62rem; margin: 0 auto; width: 100%; }
+    .sb { position:absolute; border-radius:50%; filter:blur(110px); pointer-events:none; z-index:0; }
 
-    /* ---- TYPOGRAPHY ---- */
-    h1,h2,h3,h4,h5,h6 { letter-spacing:-.02em; }
-    .text-gradient { background:linear-gradient(135deg,#a855f7 0%,#c084fc 50%,#e879f9 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .text-gradient-cool { background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 50%,#6366f1 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .section-header { display:flex; align-items:center; gap:1rem; margin-bottom:2.5rem; }
-    .section-header .emoji { font-size:2.25rem; }
-    .section-header h2 { font-size:clamp(1.6rem,4.5vw,2.5rem); font-weight:700; }
+    /* ── TYPE ────────────────────────────── */
+    h1,h2,h3,h4,h5,h6 { letter-spacing: -.022em; }
+    .tg  { background: linear-gradient(135deg,#a855f7 0%,#c084fc 55%,#e879f9 100%);
+           -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .tgc { background: linear-gradient(135deg,#8b5cf6 0%,#7c3aed 55%,#6366f1 100%);
+           -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    /* Section label system — replaces header/icon combos in some sections */
+    .sec-label {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: .62rem; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--c1);
+      display: flex; align-items: center; gap: .55rem;
+      margin-bottom: .7rem;
+    }
+    .sec-label::before { content:""; display:inline-block; width:1.4rem; height:1px; background:var(--c1); }
+    .sh  { display:flex; align-items:center; gap:.875rem; margin-bottom:2.25rem; }
+    .sh .ico { font-size:2rem; }
+    .sh h2 { font-size: clamp(1.5rem,4vw,2.35rem); font-weight:700; }
 
-    /* ---- GLASS ---- */
-    .glass { background:rgba(22,22,38,.6); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(168,85,247,.1); }
-    .glass-warm { background:linear-gradient(135deg,rgba(168,85,247,.08) 0%,rgba(22,22,38,.8) 100%); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(168,85,247,.15); }
-    .glass-cool { background:linear-gradient(135deg,rgba(139,92,246,.08) 0%,rgba(22,22,38,.8) 100%); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(139,92,246,.15); }
+    /* ── GLASS ───────────────────────────── */
+    .gl  { background:rgba(18,18,32,.65); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+           border:1px solid rgba(168,85,247,.1); }
+    .glw { background:linear-gradient(135deg,rgba(168,85,247,.07) 0%,rgba(15,15,28,.85) 100%);
+           backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+           border:1px solid rgba(168,85,247,.14); }
+    .glc { background:linear-gradient(135deg,rgba(139,92,246,.07) 0%,rgba(15,15,28,.85) 100%);
+           backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+           border:1px solid rgba(139,92,246,.14); }
 
-    /* ---- CARD ---- */
-    .card { padding:1.75rem; border-radius:1.25rem; position:relative; overflow:hidden; transition:all .4s cubic-bezier(.4,0,.2,1); }
+    /* ── CARDS ───────────────────────────── */
+    .card { padding:1.6rem; border-radius:1.2rem; position:relative; overflow:hidden;
+            transition: transform .35s cubic-bezier(.4,0,.2,1), box-shadow .35s; }
     .card:hover { transform:translateY(-3px); }
 
-    /* ---- ANIMATED BORDER ---- */
-    .animated-gradient-border { position:relative; background:rgba(22,22,38,.9); border-radius:1.25rem; }
-    .animated-gradient-border::before { content:""; position:absolute; inset:0; border-radius:1.25rem; padding:1px; background:linear-gradient(var(--ga,135deg),#a855f7,#c084fc,#e879f9,#8b5cf6,#7c3aed,#a855f7); -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:borderRotate 4s linear infinite; }
+    /* Animated gradient border */
+    .agb { position:relative; background:rgba(15,15,28,.95); border-radius:1.2rem; }
+    .agb::before {
+      content:""; position:absolute; inset:0; border-radius:1.2rem; padding:1px;
+      background:linear-gradient(var(--ga,135deg),#a855f7,#c084fc,#e879f9,#8b5cf6,#7c3aed,#a855f7);
+      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;
+      animation:borderSpin 5s linear infinite;
+    }
     @property --ga { syntax:"<angle>"; initial-value:0deg; inherits:false; }
-    @keyframes borderRotate { 0%{--ga:0deg} 100%{--ga:360deg} }
+    @keyframes borderSpin { 0%{--ga:0deg} 100%{--ga:360deg} }
 
-    /* ---- GRID ---- */
-    .grid-2 { display:grid; grid-template-columns:1fr; gap:1.25rem; }
-    @media(min-width:600px) { .grid-2 { grid-template-columns:repeat(2,1fr); } }
-    .grid-3 { display:grid; grid-template-columns:1fr; gap:1.1rem; }
-    @media(min-width:600px) { .grid-3 { grid-template-columns:repeat(2,1fr); } }
-    @media(min-width:900px) { .grid-3 { grid-template-columns:repeat(3,1fr); } }
+    /* ── GRID ────────────────────────────── */
+    .g2 { display:grid; grid-template-columns:1fr; gap:1.1rem; }
+    @media(min-width:600px) { .g2 { grid-template-columns:repeat(2,1fr); } }
+    .g3 { display:grid; grid-template-columns:1fr; gap:1rem; }
+    @media(min-width:600px) { .g3 { grid-template-columns:repeat(2,1fr); } }
+    @media(min-width:900px) { .g3 { grid-template-columns:repeat(3,1fr); } }
 
-    /* ---- BUTTONS ---- */
-    .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1.35rem; border-radius:.75rem; font-weight:600; text-decoration:none; transition:all .3s cubic-bezier(.4,0,.2,1); border:none; cursor:pointer; font-family:inherit; font-size:.875rem; white-space:nowrap; }
-    .btn:focus-visible { outline:2px solid #a855f7; outline-offset:2px; }
-    .btn:active { transform:scale(.98); }
-    .btn-primary { color:#0a0a14; background:linear-gradient(135deg,#a855f7,#c084fc); box-shadow:0 4px 15px rgba(168,85,247,.3); }
-    .btn-primary:hover { transform:scale(1.04) translateY(-2px); box-shadow:0 8px 25px rgba(168,85,247,.45); }
-    .btn-secondary { background:transparent; border:1.5px solid rgba(168,85,247,.4); color:#a855f7; }
-    .btn-secondary:hover { transform:scale(1.04) translateY(-2px); background:rgba(168,85,247,.1); border-color:rgba(168,85,247,.8); }
+    /* ── BUTTONS ─────────────────────────── */
+    .btn {
+      display:inline-flex; align-items:center; gap:.45rem; padding:.65rem 1.25rem;
+      border-radius:.75rem; font-weight:600; text-decoration:none;
+      transition:all .25s cubic-bezier(.4,0,.2,1); border:none;
+      font-family:inherit; font-size:.85rem; white-space:nowrap;
+    }
+    .btn:active { transform:scale(.97); }
+    .btn-p { color:var(--bg); background:linear-gradient(135deg,#a855f7,#c084fc);
+             box-shadow:0 4px 14px rgba(168,85,247,.28); }
+    .btn-p:hover { transform:translateY(-2px); box-shadow:0 7px 22px rgba(168,85,247,.42); }
+    .btn-s { background:transparent; border:1.5px solid rgba(168,85,247,.35); color:var(--c1); }
+    .btn-s:hover { background:rgba(168,85,247,.08); border-color:rgba(168,85,247,.7); transform:translateY(-2px); }
 
-    /* ---- ANIMATIONS ---- */
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-    @keyframes rotate { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(10deg)} 75%{transform:rotate(-10deg)} }
-    @keyframes sway { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(-8deg)} 75%{transform:rotate(8deg)} }
-    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-    @keyframes sparkle { 0%,100%{opacity:.5} 50%{opacity:1} }
-    @keyframes trophy { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.12) rotate(5deg)} 75%{transform:scale(1.12) rotate(-5deg)} }
-    .fade-in { opacity:0; transform:translateY(25px); transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1); }
-    .fade-in.visible { opacity:1; transform:translateY(0); }
-    .fade-in-left { opacity:0; transform:translateX(-30px); transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1); }
-    .fade-in-left.visible { opacity:1; transform:translateX(0); }
-    .fade-in-right { opacity:0; transform:translateX(30px); transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1); }
-    .fade-in-right.visible { opacity:1; transform:translateX(0); }
+    /* ── ANIMATIONS ──────────────────────── */
+    @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+    @keyframes fadeInUp  { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pulse     { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+    @keyframes floatY    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+    @keyframes rotateWig { 0%,100%{transform:rotate(0)} 25%{transform:rotate(9deg)} 75%{transform:rotate(-9deg)} }
+    @keyframes swayWig   { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-7deg)} 75%{transform:rotate(7deg)} }
+    @keyframes trophyBob { 0%,100%{transform:scale(1) rotate(0)} 25%{transform:scale(1.1) rotate(5deg)} 75%{transform:scale(1.1) rotate(-5deg)} }
+    @keyframes scrollDrop { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(9px);opacity:0} }
+    @keyframes spinSlow  { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    .fi  { opacity:0; transform:translateY(22px);  transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1); }
+    .fil { opacity:0; transform:translateX(-26px); transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1); }
+    .fir { opacity:0; transform:translateX(26px);  transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1); }
+    .fi.visible,.fil.visible,.fir.visible { opacity:1; transform:translate(0); }
 
-    /* ---- HERO ---- */
-    #hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:5rem 1.25rem 4rem; overflow:hidden; }
-    .hero-badge { display:inline-flex; align-items:center; gap:.5rem; padding:.55rem 1.1rem; border-radius:9999px; margin-bottom:2rem; animation:fadeInUp 1s ease .2s both; }
-    .hero-badge .dot { width:.45rem; height:.45rem; border-radius:50%; background:#8b5cf6; animation:pulse 2s infinite; }
-    .hero-name { font-size:clamp(2.5rem,9vw,6rem); font-weight:700; line-height:.95; margin-bottom:1.25rem; }
-    .hero-name span { display:block; animation:fadeInUp .8s ease both; }
-    .hero-name span:nth-child(1) { animation-delay:.4s; }
-    .hero-name span:nth-child(2) { animation-delay:.6s; }
-    .hero-tagline { font-size:clamp(.9rem,2.2vw,1.1rem); color:var(--muted); margin-bottom:1rem; animation:fadeInUp .6s ease .8s both; max-width:34rem; width:100%; }
-    .hero-tagline .c1{color:#a855f7} .hero-tagline .c2{color:#8b5cf6} .hero-tagline .c3{color:#c084fc} .hero-tagline .c4{color:#e879f9}
-    .hero-vision { font-size:clamp(.85rem,2vw,1rem); color:rgba(248,248,252,.7); max-width:38rem; margin:0 auto 1.25rem; line-height:1.75; animation:fadeInUp .6s ease .95s both; }
-    .hero-sub { font-size:.8rem; color:rgba(144,144,160,.6); font-family:"Space Grotesk",monospace; margin-bottom:2.25rem; animation:fadeInUp .5s ease 1.05s both; display:flex; align-items:center; justify-content:center; gap:.5rem; flex-wrap:wrap; }
-    .hero-sub .pin { animation:bounce 2s infinite; }
-    .hero-links { display:flex; flex-wrap:wrap; justify-content:center; gap:.75rem; animation:fadeInUp .6s ease 1.15s both; width:100%; max-width:100%; }
-    .hero-link { display:flex; align-items:center; gap:.6rem; padding:.6rem 1rem; border-radius:.875rem; text-decoration:none; color:var(--fg); font-weight:500; transition:all .3s ease; font-size:.8rem; min-width:0; }
-    .hero-link:hover { transform:scale(1.06) translateY(-3px); }
-    .hero-link span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .hero-link svg { width:1rem; height:1rem; flex-shrink:0; }
-    .scroll-indicator { margin-top:3rem; display:flex; flex-direction:column; align-items:center; gap:.6rem; animation:fadeIn 1s ease 2s both; }
-    .scroll-mouse { width:1.375rem; height:2.25rem; border:2px solid rgba(168,85,247,.4); border-radius:9999px; display:flex; justify-content:center; padding-top:.3rem; }
-    .scroll-dot { width:.35rem; height:.35rem; background:#a855f7; border-radius:50%; animation:scrollAnim 2s infinite; }
-    @keyframes scrollAnim { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(10px);opacity:0} }
-    .scroll-indicator span { font-size:.65rem; color:var(--muted); font-family:"Space Grotesk",monospace; letter-spacing:.3em; text-transform:uppercase; }
+    /* ── HERO ────────────────────────────── */
+    #hero { min-height:100vh; display:flex; flex-direction:column; align-items:center;
+            justify-content:center; text-align:center; padding:5rem 1.25rem 3.5rem; overflow:hidden; }
+    .h-badge { display:inline-flex; align-items:center; gap:.45rem; padding:.46rem 1rem;
+               border-radius:9999px; margin-bottom:2rem; animation:fadeInUp .9s ease .15s both;
+               background:rgba(12,12,24,.8); border:1px solid rgba(168,85,247,.18);
+               backdrop-filter:blur(12px); }
+    .h-badge .dot { width:.42rem; height:.42rem; border-radius:50%; background:var(--c5); animation:pulse 2s infinite; }
+    .h-name { font-size:clamp(2.6rem,9.5vw,6.2rem); font-weight:700; line-height:.93; margin-bottom:1.1rem; font-family:"Space Grotesk",sans-serif; }
+    .h-name span { display:block; animation:fadeInUp .75s ease both; }
+    .h-name .n1 { animation-delay:.35s; }
+    .h-name .n2 { animation-delay:.5s; }
+    .h-roles { font-size:clamp(.82rem,2vw,.975rem); color:var(--fg2); margin-bottom:.875rem;
+               animation:fadeInUp .6s ease .65s both; width:100%; max-width:32rem; }
+    .h-roles .r1{color:var(--c1)} .h-roles .r2{color:var(--c2)} .h-roles .r3{color:var(--c3)} .h-roles .r4{color:var(--c5)}
+    .h-vision { font-size:clamp(.85rem,1.8vw,.95rem); color:rgba(238,238,245,.6);
+                max-width:36rem; margin:0 auto 1rem; line-height:1.82;
+                animation:fadeInUp .6s ease .78s both; }
+    .h-now { font-size:.7rem; color:rgba(144,144,160,.5); font-family:"Space Grotesk",monospace;
+             margin-bottom:2rem; animation:fadeInUp .5s ease .9s both;
+             display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:.4rem; }
+    .h-now .hl { color:var(--c1); font-weight:600; }
+    .h-links { display:flex; flex-wrap:wrap; justify-content:center; gap:.6rem;
+               animation:fadeInUp .55s ease 1s both; width:100%; }
+    .hl-btn { display:flex; align-items:center; gap:.5rem; padding:.52rem .9rem;
+              border-radius:.8rem; text-decoration:none; color:var(--fg2); font-weight:500;
+              font-size:.78rem; min-width:0; transition:all .25s ease;
+              background:rgba(14,14,26,.7); border:1px solid rgba(168,85,247,.14);
+              backdrop-filter:blur(8px); }
+    .hl-btn:hover { transform:translateY(-2px); border-color:rgba(168,85,247,.35); color:var(--fg); }
+    .hl-btn svg { width:.9rem; height:.9rem; flex-shrink:0; }
+    .hl-btn span { white-space:nowrap; }
+    .scroll-ind { margin-top:3rem; display:flex; flex-direction:column; align-items:center; gap:.5rem;
+                  animation:fadeIn 1s ease 2s both; }
+    .scroll-track { width:1.25rem; height:2.1rem; border:1.5px solid rgba(168,85,247,.3);
+                    border-radius:9999px; display:flex; justify-content:center; padding-top:.28rem; }
+    .scroll-dot { width:.32rem; height:.32rem; background:var(--c1); border-radius:50%; animation:scrollDrop 2s infinite; }
+    .scroll-ind span { font-size:.6rem; color:var(--fg3); font-family:"Space Grotesk",monospace;
+                       letter-spacing:.28em; text-transform:uppercase; }
 
-    /* ---- SKILL ITEMS ---- */
-    .skill-item { display:flex; align-items:center; gap:.65rem; padding:.65rem .75rem; border-radius:.75rem; background:rgba(255,255,255,.02); transition:all .3s ease; cursor:default; }
-    .skill-item:hover { transform:translateX(6px); background:rgba(255,255,255,.05); }
-    .skill-dot { width:.45rem; height:.45rem; border-radius:50%; flex-shrink:0; animation:pulse 2s infinite; }
+    /* ── SKILL ROW ───────────────────────── */
+    .sk-item { display:flex; align-items:center; gap:.6rem; padding:.6rem .7rem; border-radius:.7rem;
+               background:rgba(255,255,255,.02); transition:all .25s ease; cursor:default; }
+    .sk-item:hover { transform:translateX(5px); background:rgba(255,255,255,.04); }
+    .sk-dot { width:.38rem; height:.38rem; border-radius:50%; flex-shrink:0; animation:pulse 2.2s infinite; }
 
-    /* ---- PROJECTS ---- */
-    .project-card { border-radius:1.25rem; overflow:hidden; transition:all .4s cubic-bezier(.4,0,.2,1); }
-    .project-card:hover { box-shadow:0 16px 50px rgba(168,85,247,.12); transform:translateY(-3px); }
-    .project-header { padding:1.5rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; cursor:pointer; transition:background .3s ease; }
-    .project-header:hover { background:rgba(168,85,247,.05); }
-    .project-title { display:flex; align-items:center; gap:.75rem; }
-    .project-title .emoji { font-size:1.75rem; }
-    .project-title h3 { font-size:1.2rem; font-weight:700; }
-    .project-tech { font-size:.75rem; font-family:"Space Grotesk",monospace; margin-top:.5rem; }
-    .project-desc { color:var(--muted); margin-top:.6rem; font-size:.875rem; display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    .project-chevron { font-size:1.5rem; transition:transform .3s ease; flex-shrink:0; }
-    .project-chevron.open { transform:rotate(90deg); }
-    .project-content { padding:0 1.5rem 1.5rem; border-top:1px solid rgba(168,85,247,.1); display:none; }
-    .project-content.open { display:block; padding-top:1.5rem; }
-    .project-list-item { display:flex; align-items:flex-start; gap:.65rem; color:var(--muted); margin-bottom:.45rem; font-size:.875rem; }
-    .project-buttons { display:flex; flex-wrap:wrap; gap:.875rem; margin-top:1.5rem; }
+    /* ── PROJECT CARDS ───────────────────── */
+    .proj-card { border-radius:1.2rem; overflow:hidden; transition:all .35s cubic-bezier(.4,0,.2,1); }
+    .proj-card:hover { box-shadow:0 14px 44px rgba(168,85,247,.1); transform:translateY(-3px); }
+    .proj-hdr { padding:1.4rem; display:flex; align-items:flex-start; justify-content:space-between;
+                gap:.875rem; transition:background .25s ease; }
+    .proj-hdr:hover { background:rgba(168,85,247,.04); }
+    .proj-title { display:flex; align-items:center; gap:.7rem; }
+    .proj-title .ico { font-size:1.625rem; }
+    .proj-title h3 { font-size:1.05rem; font-weight:700; }
+    .proj-stack { font-size:.68rem; font-family:"Space Grotesk",monospace; margin-top:.4rem; }
+    .proj-blurb { color:var(--fg2); margin-top:.45rem; font-size:.82rem;
+                  display:-webkit-box; -webkit-line-clamp:2; line-clamp:2;
+                  -webkit-box-orient:vertical; overflow:hidden; }
+    .proj-chev { font-size:1.375rem; transition:transform .28s ease; flex-shrink:0; color:var(--fg3); }
+    .proj-chev.open { transform:rotate(90deg); color:var(--c1); }
+    .proj-body { padding:0 1.4rem 1.4rem; border-top:1px solid rgba(168,85,247,.08); display:none; }
+    .proj-body.open { display:block; padding-top:1.35rem; }
+    .proj-li { display:flex; align-items:flex-start; gap:.6rem; color:var(--fg2); margin-bottom:.4rem; font-size:.84rem; }
+    .proj-btns { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.35rem; }
+    /* Clickable proj header */
+    .proj-hdr { cursor: default; }
 
-    /* ---- TIMELINE ---- */
-    .timeline { position:relative; }
-    .timeline::before { content:""; position:absolute; left:1.25rem; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,#a855f7,#8b5cf6,#e879f9); opacity:.3; }
-    @media(min-width:768px) { .timeline::before { left:50%; } }
-    .timeline-item { position:relative; padding-left:3.5rem; margin-bottom:2rem; }
-    @media(min-width:768px) { .timeline-item { padding-left:0; padding-right:52%; } .timeline-item:nth-child(even) { padding-left:52%; padding-right:0; } }
-    .timeline-dot { position:absolute; left:.5rem; top:1.5rem; width:1.375rem; height:1.375rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.7rem; z-index:10; animation:pulse 2s infinite; }
-    @media(min-width:768px) { .timeline-dot { left:50%; transform:translateX(-50%); } }
+    /* ── EXPERIENCE TIMELINE ─────────────── */
+    .tl { position:relative; }
+    .tl::before { content:""; position:absolute; left:1.1rem; top:0; bottom:0; width:1px;
+                  background:linear-gradient(to bottom,var(--c1),var(--c2),var(--c5)); opacity:.22; }
+    @media(min-width:768px) { .tl::before { left:50%; } }
+    .tl-item { position:relative; padding-left:3.2rem; margin-bottom:1.75rem; }
+    @media(min-width:768px) { .tl-item { padding-left:0; padding-right:52%; }
+                              .tl-item:nth-child(even) { padding-left:52%; padding-right:0; } }
+    .tl-dot { position:absolute; left:.4rem; top:1.4rem; width:1.3rem; height:1.3rem;
+              border-radius:50%; display:flex; align-items:center; justify-content:center;
+              font-size:.65rem; z-index:10; }
+    @media(min-width:768px) { .tl-dot { left:50%; transform:translateX(-50%); } }
 
-    /* ---- EDUCATION ---- */
-    .edu-grid { display:grid; gap:1.25rem; }
+    /* ── EDUCATION ───────────────────────── */
+    .edu-grid { display:grid; gap:1.1rem; }
     @media(min-width:600px) { .edu-grid { grid-template-columns:repeat(2,1fr); } }
-    .edu-card { padding:1.75rem; border-radius:1.25rem; }
-    .edu-content { display:flex; align-items:flex-start; gap:.875rem; }
-    .edu-emoji { font-size:1.625rem; }
-    .edu-title { font-size:1rem; font-weight:700; margin-bottom:.2rem; }
-    .edu-period { font-size:.8rem; color:#8b5cf6; font-family:"Space Grotesk",monospace; margin-bottom:.4rem; }
-    .edu-desc { font-size:.8rem; color:var(--muted); }
+    .edu-card { padding:1.5rem; border-radius:1.2rem; }
+    .edu-inner { display:flex; align-items:flex-start; gap:.8rem; }
+    .edu-ico { font-size:1.5rem; flex-shrink:0; }
+    .edu-name { font-size:.9rem; font-weight:700; margin-bottom:.18rem; }
+    .edu-yr   { font-size:.7rem; color:var(--c2); font-family:"Space Grotesk",monospace; margin-bottom:.35rem; }
+    .edu-desc { font-size:.78rem; color:var(--fg2); }
 
-    /* ---- AWARDS ---- */
-    .award-item { display:flex; align-items:center; gap:.875rem; padding:1.1rem; border-radius:.875rem; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.05); transition:all .3s ease; cursor:default; }
-    .award-item:hover { transform:translateX(8px) scale(1.01); border-color:rgba(168,85,247,.2); }
-    .award-emoji { font-size:1.5rem; flex-shrink:0; }
-    .award-dot { margin-left:auto; width:.45rem; height:.45rem; border-radius:50%; flex-shrink:0; }
-    .cert-item { display:flex; align-items:flex-start; gap:.875rem; padding:.875rem; border-radius:.75rem; transition:all .3s ease; cursor:default; }
-    .cert-item:hover { transform:translateX(6px); background:rgba(255,255,255,.02); }
-    .cert-dot { width:.65rem; height:.65rem; border-radius:50%; margin-top:.3rem; flex-shrink:0; }
+    /* ── RESEARCH CARDS ──────────────────── */
+    .rc { padding:1.6rem; border-radius:1.2rem; border:1px solid rgba(168,85,247,.15);
+          background:rgba(18,18,32,.55); transition:all .35s ease; }
+    .rc:hover { border-color:rgba(168,85,247,.32); transform:translateY(-3px); box-shadow:0 12px 32px rgba(168,85,247,.08); }
 
-    /* ---- VISUAL TIMELINE ---- */
-    .vtimeline { position:relative; padding-left:2.25rem; }
-    .vtimeline::before { content:""; position:absolute; left:.6rem; top:.5rem; bottom:.5rem; width:2px; background:linear-gradient(to bottom,#a855f7,#8b5cf6,#c084fc,#e879f9); opacity:.4; border-radius:2px; }
-    .vtl-item { position:relative; margin-bottom:2.25rem; }
-    .vtl-dot { position:absolute; left:-1.85rem; top:.3rem; width:.9rem; height:.9rem; border-radius:50%; border:2px solid #a855f7; background:var(--bg); }
-    .vtl-dot::after { content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:.35rem; height:.35rem; border-radius:50%; background:#a855f7; }
-    .vtl-year { font-size:.7rem; font-weight:700; color:#a855f7; font-family:"Space Grotesk",monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.4rem; }
-    .vtl-events { display:flex; flex-direction:column; gap:.4rem; }
-    .vtl-event { font-size:.875rem; color:rgba(248,248,252,.8); display:flex; align-items:flex-start; gap:.45rem; }
-    .vtl-event::before { content:"→"; color:#a855f7; flex-shrink:0; }
+    /* ── AWARDS / CERTS ──────────────────── */
+    .aw-item { display:flex; align-items:center; gap:.8rem; padding:.9rem; border-radius:.8rem;
+               background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.04);
+               transition:all .25s ease; cursor:default; }
+    .aw-item:hover { transform:translateX(6px); border-color:rgba(168,85,247,.16); }
+    .aw-ico { font-size:1.35rem; flex-shrink:0; }
+    .aw-dot { margin-left:auto; width:.38rem; height:.38rem; border-radius:50%; flex-shrink:0; }
+    .ct-item { display:flex; align-items:flex-start; gap:.8rem; padding:.75rem;
+               border-radius:.7rem; transition:all .25s ease; cursor:default; }
+    .ct-item:hover { transform:translateX(5px); background:rgba(255,255,255,.018); }
+    .ct-dot { width:.55rem; height:.55rem; border-radius:50%; margin-top:.28rem; flex-shrink:0; }
 
-    /* ---- PROFESSIONAL DEV ---- */
-    .pd-item { padding:1.5rem; border-radius:1.25rem; border:1px solid rgba(168,85,247,.15); background:rgba(22,22,38,.5); transition:all .3s ease; }
-    .pd-item:hover { border-color:rgba(168,85,247,.35); transform:translateY(-3px); }
-    .pd-tag { display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:9999px; font-size:.65rem; font-weight:600; font-family:"Space Grotesk",monospace; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.65rem; }
-    .pd-tag.upcoming { background:rgba(232,121,249,.12); color:#e879f9; border:1px solid rgba(232,121,249,.3); }
-    .pd-tag.attended { background:rgba(168,85,247,.12); color:#a855f7; border:1px solid rgba(168,85,247,.3); }
-    .pd-tag.continuous { background:rgba(139,92,246,.12); color:#8b5cf6; border:1px solid rgba(139,92,246,.3); }
+    /* ── VISUAL TIMELINE ─────────────────── */
+    .vtl { position:relative; padding-left:2.1rem; }
+    .vtl::before { content:""; position:absolute; left:.55rem; top:.5rem; bottom:.5rem;
+                   width:1.5px; background:linear-gradient(to bottom,#a855f7,#8b5cf6,#c084fc,#e879f9);
+                   opacity:.32; border-radius:2px; }
+    .vtl-item { position:relative; margin-bottom:2rem; }
+    .vtl-dot { position:absolute; left:-1.7rem; top:.28rem; width:.82rem; height:.82rem;
+               border-radius:50%; border:1.5px solid var(--c1); background:var(--bg); }
+    .vtl-dot::after { content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+                      width:.32rem; height:.32rem; border-radius:50%; background:var(--c1); }
+    .vtl-yr { font-size:.64rem; font-weight:700; color:var(--c1); font-family:"Space Grotesk",monospace;
+              letter-spacing:.12em; text-transform:uppercase; margin-bottom:.35rem; }
+    .vtl-evs { display:flex; flex-direction:column; gap:.35rem; }
+    .vtl-ev { font-size:.84rem; color:rgba(238,238,245,.75); display:flex; align-items:flex-start; gap:.4rem; }
+    .vtl-ev::before { content:"→"; color:var(--c1); flex-shrink:0; font-family:"Space Grotesk"; }
 
-    /* ---- APPROACH ---- */
-    .approach-item { padding:1.5rem; border-radius:1.25rem; transition:all .4s ease; cursor:default; }
-    .approach-item:hover { transform:translateX(8px); }
-    .approach-header { display:flex; align-items:flex-start; gap:1.25rem; }
-    .approach-number { font-size:2.25rem; font-weight:700; font-family:"Space Grotesk",monospace; color:rgba(255,255,255,.1); transition:color .3s ease; line-height:1; }
-    .approach-title { font-size:1rem; font-weight:700; margin-bottom:.5rem; transition:color .3s ease; }
-    .approach-content { color:var(--muted); line-height:1.7; font-size:.875rem; }
+    /* ── PROF DEV ────────────────────────── */
+    .pd-item { padding:1.35rem; border-radius:1.2rem; border:1px solid rgba(168,85,247,.12);
+               background:rgba(18,18,32,.48); transition:all .25s ease; }
+    .pd-item:hover { border-color:rgba(168,85,247,.28); transform:translateY(-2px); }
+    .pd-tag { display:inline-flex; align-items:center; gap:.28rem; padding:.16rem .58rem;
+              border-radius:9999px; font-size:.58rem; font-weight:600;
+              font-family:"Space Grotesk",monospace; letter-spacing:.07em;
+              text-transform:uppercase; margin-bottom:.6rem; }
+    .pd-tag.up  { background:rgba(232,121,249,.09); color:var(--c5); border:1px solid rgba(232,121,249,.24); }
+    .pd-tag.att { background:rgba(168,85,247,.09);  color:var(--c1); border:1px solid rgba(168,85,247,.24); }
+    .pd-tag.cnt { background:rgba(139,92,246,.09);  color:var(--c2); border:1px solid rgba(139,92,246,.24); }
 
-    /* ---- TAG PILLS ---- */
-    .tag-pill { display:inline-flex; align-items:center; padding:.2rem .65rem; border-radius:9999px; font-size:.72rem; font-weight:500; font-family:"Space Grotesk",monospace; background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.2); color:#c084fc; word-break:break-word; }
-
-    /* ---- FOCUS TAGS ---- */
-    .focus-tag { display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem; border-radius:9999px; font-size:.8rem; font-weight:500; background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.2); color:var(--fg); transition:all .3s ease; word-break:break-word; }
-    .focus-tag:hover { background:rgba(168,85,247,.18); transform:translateY(-2px); }
-
-    /* ---- RESEARCH CARD ---- */
-    .research-card { padding:1.75rem; border-radius:1.25rem; border:1px solid rgba(168,85,247,.2); background:rgba(22,22,38,.5); transition:all .4s ease; }
-    .research-card:hover { border-color:rgba(168,85,247,.4); transform:translateY(-3px); box-shadow:0 14px 36px rgba(168,85,247,.1); }
-
-    /* ---- STAT CARDS ---- */
-    .stat-card { padding:1.1rem; border-radius:.875rem; text-align:center; transition:all .3s ease; }
+    /* ── MISC COMPONENTS ─────────────────── */
+    .cwo-item { display:flex; align-items:flex-start; gap:.8rem; padding:.9rem 1rem;
+                border-radius:.9rem; background:rgba(18,18,32,.45);
+                border:1px solid rgba(168,85,247,.09); transition:all .25s ease; }
+    .cwo-item:hover { border-color:rgba(168,85,247,.24); transform:translateX(5px); }
+    .cwo-dot { width:.5rem; height:.5rem; border-radius:50%; background:var(--c1);
+               margin-top:.42rem; flex-shrink:0; animation:pulse 2s infinite; }
+    .focus-tag { display:inline-flex; align-items:center; gap:.38rem; padding:.42rem .875rem;
+                 border-radius:9999px; font-size:.75rem; font-weight:500;
+                 background:rgba(168,85,247,.06); border:1px solid rgba(168,85,247,.16);
+                 color:var(--fg); transition:all .22s ease; }
+    .focus-tag:hover { background:rgba(168,85,247,.14); transform:translateY(-2px); }
+    .ri-tag { display:inline-flex; align-items:center; gap:.38rem; padding:.42rem .875rem;
+              border-radius:.65rem; font-size:.78rem; font-weight:500;
+              background:rgba(18,18,32,.6); border:1px solid rgba(168,85,247,.12);
+              color:var(--fg); transition:all .22s ease; }
+    .ri-tag:hover { border-color:rgba(168,85,247,.32); background:rgba(168,85,247,.06); }
+    .tag-pill { display:inline-flex; padding:.16rem .58rem; border-radius:9999px; font-size:.68rem;
+                background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.16); color:var(--c3); }
+    .stat-card { padding:.9rem; border-radius:.875rem; text-align:center; transition:all .25s ease; }
     .stat-card:hover { transform:scale(1.04) translateY(-2px); }
-    .stat-value { font-size:1.2rem; font-weight:700; margin-bottom:.2rem; }
-    .stat-label { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+    .stat-v { font-size:1.05rem; font-weight:700; margin-bottom:.18rem; }
+    .stat-l { font-size:.58rem; color:var(--fg2); text-transform:uppercase; letter-spacing:.1em; }
 
-    /* ---- HOVER LIFT ---- */
-    .hover-lift { transition:all .4s cubic-bezier(.4,0,.2,1); }
-    .hover-lift:hover { transform:translateY(-6px); box-shadow:0 20px 45px rgba(0,0,0,.35),0 0 35px rgba(168,85,247,.12); }
+    /* ── FOOTER ──────────────────────────── */
+    footer { border-top:1px solid rgba(168,85,247,.08); padding:3.5rem 1.5rem 2rem; }
+    .ft-inner { max-width:62rem; margin:0 auto; width:100%; }
+    .ft-top { display:flex; flex-direction:column; gap:2rem; margin-bottom:2.5rem; }
+    @media(min-width:600px) { .ft-top { flex-direction:row; justify-content:space-between; align-items:flex-start; } }
+    .ft-name { font-size:1.15rem; font-weight:700; margin-bottom:.35rem; }
+    .ft-desc { color:var(--fg3); font-size:.78rem; max-width:28rem; line-height:1.6; }
+    .ft-links { display:flex; gap:.6rem; flex-wrap:wrap; }
+    .ft-link { display:flex; align-items:center; justify-content:center; width:2.2rem; height:2.2rem;
+               border-radius:.6rem; transition:all .22s ease; text-decoration:none;
+               background:rgba(18,18,32,.6); border:1px solid rgba(168,85,247,.12); }
+    .ft-link:hover { transform:scale(1.1) translateY(-2px); border-color:rgba(168,85,247,.32); }
+    .ft-link svg { width:1rem; height:1rem; }
+    .ft-bot { display:flex; flex-direction:column; gap:1rem; align-items:center;
+              padding-top:1.75rem; border-top:1px solid rgba(255,255,255,.04); text-align:center; }
+    @media(min-width:600px) { .ft-bot { flex-direction:row; justify-content:space-between; } }
+    .ft-copy { font-size:.7rem; color:rgba(144,144,160,.5); }
+    .btt { display:inline-flex; align-items:center; gap:.4rem; padding:.4rem .9rem;
+           border-radius:9999px; font-size:.7rem; font-weight:500; border:none;
+           background:rgba(18,18,32,.6); color:var(--fg2); backdrop-filter:blur(8px);
+           transition:all .22s ease; font-family:inherit; }
+    .btt:hover { color:var(--c1); transform:scale(1.05) translateY(-2px); }
+    .btt svg { width:.78rem; height:.78rem; }
 
-    /* ---- FOOTER ---- */
-    footer { border-top:1px solid rgba(168,85,247,.1); padding:3.5rem 1.5rem 2rem; }
-    .footer-content { max-width:64rem; margin:0 auto; width:100%; }
-    .footer-top { display:flex; flex-direction:column; gap:2rem; margin-bottom:2.5rem; }
-    @media(min-width:600px) { .footer-top { flex-direction:row; justify-content:space-between; align-items:flex-start; } }
-    .footer-name { font-size:1.375rem; font-weight:700; margin-bottom:.4rem; }
-    .footer-desc { color:var(--muted); font-size:.8rem; max-width:28rem; }
-    .footer-links { display:flex; gap:.75rem; flex-wrap:wrap; }
-    .footer-link { display:flex; align-items:center; justify-content:center; width:2.5rem; height:2.5rem; border-radius:.75rem; transition:all .3s ease; flex-shrink:0; }
-    .footer-link:hover { transform:scale(1.12) translateY(-2px); }
-    .footer-link svg { width:1.125rem; height:1.125rem; }
-    .footer-bottom { display:flex; flex-direction:column; gap:1rem; align-items:center; padding-top:1.75rem; border-top:1px solid rgba(255,255,255,.04); text-align:center; }
-    @media(min-width:600px) { .footer-bottom { flex-direction:row; justify-content:space-between; } }
-    .footer-copy { font-size:.75rem; color:rgba(144,144,160,.65); }
-    .footer-heart { color:#e879f9; }
-    .back-to-top { display:inline-flex; align-items:center; gap:.45rem; padding:.45rem 1rem; border-radius:9999px; font-size:.75rem; font-weight:500; border:none; cursor:pointer; background:rgba(22,22,38,.7); color:var(--muted); backdrop-filter:blur(10px); transition:all .3s ease; font-family:inherit; }
-    .back-to-top:hover { transform:scale(1.08) translateY(-2px); color:#a855f7; }
-    .back-to-top svg { width:.875rem; height:.875rem; }
-
-    /* ---- SCROLLBAR ---- */
-    ::-webkit-scrollbar { width:6px; }
-    ::-webkit-scrollbar-track { background:rgba(168,85,247,.03); }
-    ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,#a855f7,#8b5cf6); border-radius:10px; }
-    a { color:inherit; text-decoration:none; }
-
-    /* ---- CURRENTLY WORKING ON ---- */
-    .cwo-item { display:flex; align-items:flex-start; gap:1rem; padding:1.1rem 1.25rem; border-radius:1rem; background:rgba(22,22,38,.5); border:1px solid rgba(168,85,247,.12); transition:all .3s ease; }
-    .cwo-item:hover { border-color:rgba(168,85,247,.3); transform:translateX(6px); }
-    .cwo-dot { width:.6rem; height:.6rem; border-radius:50%; background:#a855f7; margin-top:.45rem; flex-shrink:0; animation:pulse 2s infinite; }
-
-    /* ---- RESEARCH INTERESTS ---- */
-    .ri-tag { display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1rem; border-radius:.75rem; font-size:.8rem; font-weight:500; background:rgba(22,22,38,.6); border:1px solid rgba(168,85,247,.15); color:var(--fg); transition:all .3s ease; }
-    .ri-tag:hover { background:rgba(168,85,247,.12); border-color:rgba(168,85,247,.4); transform:translateY(-2px); }
-
-    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
-
-    /* ---- PUBLICATIONS ---- */
-    .pub-topic { display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .75rem; border-radius:9999px; font-size:.72rem; font-weight:500; background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.18); color:#c084fc; margin:.2rem; word-break:break-word; }
-
-    /* ---- MOBILE OVERFLOW HARDENING ---- */
-    @media(max-width:600px) {
-      /* Sections stay within viewport */
-      section { padding:4rem 1rem; }
-      /* All flex rows wrap */
-      .hero-links, .footer-links { gap:.6rem; }
-      /* Stat cards go 2-col */
-      [style*="grid-template-columns:repeat(auto-fit"] { grid-template-columns: repeat(2,1fr) !important; }
-      /* Timeline always single column */
-      .timeline-item { padding-left:3rem !important; padding-right:0 !important; }
-      .timeline::before { left:1rem !important; }
-      .timeline-dot { left:.25rem !important; transform:none !important; }
-      /* Research cards flex column */
-      .research-card > div { flex-direction:column !important; }
-      /* Btn groups wrap */
-      .project-buttons { flex-direction:column; }
-      .project-buttons .btn { width:100%; justify-content:center; }
-      /* Tags wrap and don't overflow */
-      [style*="display:flex;flex-wrap:wrap"] { max-width:100%; }
-      /* Nav stays within screen */
+    /* ── MOBILE ──────────────────────────── */
+    @media(max-width:560px) {
+      section { padding:3.75rem 1rem; }
+      .proj-hdr { padding:1.1rem; } .proj-body { padding:0 1.1rem 1.1rem; }
+      .proj-body.open { padding-top:1.1rem; }
       nav { width:calc(100% - 1.5rem); }
-      /* Cards don't overflow */
-      .card, .pd-item, .research-card, .cwo-item, .award-item { word-break:break-word; overflow-wrap:break-word; }
-      /* No hover transforms that could cause layout shift */
-      .hover-lift:hover { transform:none; }
-      /* Orbs can't extend past viewport */
-      .orb-1, .orb-2, .orb-3 { right:auto; bottom:auto; }
+      /* Restore cursor on mobile */
+      #oc-wrap { display:none; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+      *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
     }
   </style>
 </head>
 <body>
-  <div class="warp-overlay" id="warpOverlay"></div>
-  <canvas id="constellation-canvas"></canvas>
-  <div class="grid-overlay"></div>
-  <div class="parallax-orbs" id="parallaxOrbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+
+  <!-- ═══════ ORBITAL CURSOR ═══════
+       One SVG element; JS animates satellite position
+       along an elliptical path every frame.
+  ════════════════════════════════ -->
+  <div id="oc-wrap">
+    <svg id="oc-svg" viewBox="-50 -50 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Elliptical orbit ring (eccentric, slightly tilted) -->
+      <ellipse id="oc-orbit" cx="0" cy="0" rx="18" ry="11"
+        transform="rotate(-18)"
+        stroke="rgba(168,85,247,0.32)" stroke-width=".8" fill="none"
+        stroke-dasharray="3 2.2"/>
+
+      <!-- Central point — the cursor tip, precise -->
+      <circle id="oc-center" cx="0" cy="0" r="2.2"
+        fill="#c084fc"/>
+
+      <!-- The travelling satellite -->
+      <circle id="oc-sat" cx="18" cy="0" r="2"
+        fill="#e879f9"/>
+
+      <!-- Periapsis flash ring — shown briefly on click -->
+      <circle id="oc-flash" cx="0" cy="0" r="0"
+        fill="none" stroke="#e879f9" stroke-width="1" opacity="0"/>
+    </svg>
   </div>
 
+  <!-- ═══════ BACKGROUND ═══════ -->
+  <canvas id="starfield"></canvas>
+  <div class="grid-overlay"></div>
+
   <div class="warp-container" id="warpContainer">
-    <div style="position:relative;z-index:10;width:100%;overflow:hidden;">
+   <div style="position:relative;z-index:10;width:100%;overflow:hidden;">
 
-      <!-- ======= HERO ======= -->
-      <section id="hero">
-        <div class="hero-badge glass-warm">
-          <svg style="animation:sparkle 2s infinite;flex-shrink:0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M12 3v1m0 16v1m-9-9h1m16 0h1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
-          <span style="font-size:.8rem;font-weight:500">Open for Research &amp; Collaborations</span>
-          <span class="dot"></span>
-        </div>
+    <!-- ═══════ HERO ═══════ -->
+    <section id="hero">
+      <div class="h-badge gl">
+        <span class="dot"></span>
+        <span style="font-size:.76rem;font-weight:500">Open for Research &amp; Collaborations</span>
+      </div>
 
-        <h1 class="hero-name">
-          <span>Shatakshita</span>
-          <span class="text-gradient">Shekhar</span>
-        </h1>
+      <h1 class="h-name">
+        <span class="n1">Shatakshita</span>
+        <span class="n2 tg">Shekhar</span>
+      </h1>
 
-        <p class="hero-tagline">
-          <span class="c1">Aerospace Engineering</span> &nbsp;·&nbsp;
-          <span class="c2">Research Intern</span> &nbsp;·&nbsp;
-          <span class="c3">Cosmology Writer</span> &nbsp;·&nbsp;
-          <span class="c4">Science Communicator</span>
-        </p>
+      <p class="h-roles">
+        <span class="r1">Aerospace Engineering</span> &nbsp;·&nbsp;
+        <span class="r2">Research Intern</span> &nbsp;·&nbsp;
+        <span class="r3">Cosmology Writer</span> &nbsp;·&nbsp;
+        <span class="r4">Science Communicator</span>
+      </p>
 
-        <p class="hero-vision">
-          Driven by curiosity about how the universe works — building toward a career in astrophysics and space research through aerospace engineering, scientific computing, and science communication.
-        </p>
+      <p class="h-vision">
+        Currently interning at ExoVista, studying Aerospace Engineering at SRMIST, and writing about cosmology for The Redshift Asterism — building toward a career in astrophysics and space research through engineering, computing, and science communication.
+      </p>
 
-        <p class="hero-sub">
-          <span class="pin">📍</span>
-          Currently: Research Intern @ ExoVista &nbsp;·&nbsp; B.Tech Aerospace Engineering @ SRMIST &nbsp;·&nbsp; Founder, The Redshift Asterism
-        </p>
+      <p class="h-now">
+        <span class="hl">Now:</span>
+        Research Intern @ ExoVista &nbsp;·&nbsp;
+        B.Tech Aerospace Engineering @ SRMIST &nbsp;·&nbsp;
+        Founder, The Redshift Asterism
+      </p>
 
-        <div class="hero-links">
-          <a href="mailto:shekhar.shatakshita@gmail.com" class="hero-link glass hover-lift" style="border-color:rgba(168,85,247,.3)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span>Email</span>
-          </a>
-          <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color:rgba(139,92,246,.3)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            <span>LinkedIn</span>
-          </a>
-          <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color:rgba(192,132,252,.3)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-            <span>GitHub</span>
-          </a>
-          <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="hero-link glass hover-lift" style="border-color:rgba(232,121,249,.3)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            <span>The Redshift Asterism</span>
-          </a>
-        </div>
+      <div class="h-links">
+        <a href="mailto:shekhar.shatakshita@gmail.com" class="hl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>Email</span>
+        </a>
+        <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="hl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="hl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="hl-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span>The Redshift Asterism</span>
+        </a>
+      </div>
 
-        <div class="scroll-indicator">
-          <span>Explore</span>
-          <div class="scroll-mouse"><div class="scroll-dot"></div></div>
-        </div>
-      </section>
+      <div class="scroll-ind">
+        <div class="scroll-track"><div class="scroll-dot"></div></div>
+        <span>Explore</span>
+      </div>
+    </section>
 
-      <!-- ======= NAV ======= -->
-      <nav>
-        <div class="nav-inner glass" id="navInner">
-          <button class="nav-btn active" data-section="about"><span>✦</span><span class="label">About</span></button>
-          <button class="nav-btn" data-section="experience"><span>💼</span><span class="label">Experience</span></button>
-          <button class="nav-btn" data-section="research"><span>🔭</span><span class="label">Research</span></button>
-          <button class="nav-btn" data-section="publications"><span>📰</span><span class="label">Publications</span></button>
-          <button class="nav-btn" data-section="projects"><span>🛠️</span><span class="label">Projects</span></button>
-          <button class="nav-btn" data-section="skills"><span>◈</span><span class="label">Skills</span></button>
-          <button class="nav-btn" data-section="interests"><span>🌌</span><span class="label">Interests</span></button>
-          <button class="nav-btn" data-section="profdev"><span>📡</span><span class="label">Prof. Development</span></button>
-          <button class="nav-btn" data-section="timeline"><span>⏳</span><span class="label">Timeline</span></button>
-          <button class="nav-btn" data-section="achievements"><span>🏆</span><span class="label">Achievements</span></button>
-          <button class="nav-btn" data-section="contact"><span>✉️</span><span class="label">Contact</span></button>
-        </div>
-      </nav>
+    <!-- ═══════ NAV ═══════ -->
+    <nav>
+      <div class="nav-inner" id="navInner">
+        <button class="nav-btn active" data-section="about"><span>✦</span><span class="lbl">About</span></button>
+        <button class="nav-btn" data-section="approach"><span>🧭</span><span class="lbl">Approach</span></button>
+        <button class="nav-btn" data-section="experience"><span>💼</span><span class="lbl">Experience</span></button>
+        <button class="nav-btn" data-section="research"><span>🔭</span><span class="lbl">Research</span></button>
+        <button class="nav-btn" data-section="publications"><span>📰</span><span class="lbl">Publications</span></button>
+        <button class="nav-btn" data-section="projects"><span>🛠️</span><span class="lbl">Projects</span></button>
+        <button class="nav-btn" data-section="skills"><span>◈</span><span class="lbl">Skills</span></button>
+        <button class="nav-btn" data-section="interests"><span>🌌</span><span class="lbl">Interests</span></button>
+        <button class="nav-btn" data-section="profdev"><span>📡</span><span class="lbl">Prof. Dev</span></button>
+        <button class="nav-btn" data-section="timeline"><span>⏳</span><span class="lbl">Timeline</span></button>
+        <button class="nav-btn" data-section="achievements"><span>🏆</span><span class="lbl">Achievements</span></button>
+        <button class="nav-btn" data-section="contact"><span>✉️</span><span class="lbl">Contact</span></button>
+      </div>
+    </nav>
 
-      <!-- ======= ABOUT ======= -->
-      <section id="about">
-        <div class="section-blur" style="width:20rem;height:20rem;background:rgba(168,85,247,.05);top:50%;left:-5rem;"></div>
-        <div class="max-w-4xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:rotate 4s ease-in-out infinite">✦</span>
-            <h2>About <span class="text-gradient">Me</span></h2>
+    <!-- ═══════ ABOUT ═══════ -->
+    <section id="about">
+      <div class="sb" style="width:18rem;height:18rem;background:rgba(168,85,247,.04);top:40%;left:-4rem;"></div>
+      <div class="w4" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:rotateWig 4s ease-in-out infinite">✦</span><h2>About <span class="tg">Me</span></h2></div>
+
+        <div style="display:flex;flex-direction:column;gap:1.5rem">
+          <div class="card glw fi" style="transition-delay:.1s">
+            <p style="font-size:.62rem;color:var(--c5);font-family:'Space Grotesk',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.65rem;font-weight:600">Present</p>
+            <p style="font-size:1rem;line-height:1.88;color:rgba(238,238,245,.9)">
+              I am an incoming Aerospace Engineering student at <strong style="color:#c084fc">SRM Institute of Science and Technology (SRMIST)</strong>, Kattankulathur Campus, beginning my B.Tech in 2026. Alongside this, I work as a <strong style="color:#a855f7">Research Intern at ExoVista</strong>, contributing to astronomy and space science research, and I founded <strong style="color:#8b5cf6">The Redshift Asterism</strong> in June 2026 — an independent publication where I write research-driven articles on cosmology and astrophysics for a general audience. I also contribute to NASA-affiliated open science work through Zooniverse and the Open Science Data Repository (OSDR) Analysis Working Group.
+            </p>
           </div>
 
-          <div style="display:flex;flex-direction:column;gap:1.75rem">
-            <div class="card glass-warm fade-in" style="animation-delay:.1s">
-              <p style="font-size:1.05rem;line-height:1.85;color:rgba(248,248,252,.9)">
-                Some of the deepest questions humans have ever asked are about the universe itself — how it began, what it is made of, where it is going. Those questions are what drew me to <span style="color:#a855f7;font-weight:600">astrophysics and cosmology</span>, and they continue to shape everything I do. I am pursuing a <span style="color:#c084fc;font-weight:600">B.Tech in Aerospace Engineering at SRM Institute of Science and Technology (SRMIST)</span> because I want to understand not just the cosmos we observe, but the systems we build to reach it.
+          <div class="card glc fi" style="transition-delay:.18s">
+            <p style="font-size:.62rem;color:var(--c5);font-family:'Space Grotesk',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.65rem;font-weight:600">Current Work</p>
+            <p style="font-size:1rem;line-height:1.88;color:rgba(238,238,245,.9)">
+              My technical work centres on Python — building applications like a Streamlit-based RPG with branching state logic and a CLI task manager with persistent CSV storage — and on the mathematics behind cosmology and orbital mechanics. At ExoVista, that translates into data analysis and contributing to collaborative research workflows. At The Redshift Asterism, it means converting research literature on topics like black holes, dark matter, and the origins of the universe into writing that holds up to scrutiny without losing readability. These three threads — engineering coursework, applied programming, and science writing — currently run in parallel, which is part of what the next few years of my degree are meant to change.
+            </p>
+          </div>
+
+          <div class="agb fi" style="transition-delay:.26s">
+            <div style="padding:1.6rem;position:relative;z-index:1">
+              <p style="font-size:.62rem;color:var(--c5);font-family:'Space Grotesk',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.65rem;font-weight:600">Long-Term Direction</p>
+              <p style="font-size:.95rem;line-height:1.85;color:rgba(238,238,245,.88)">
+                Working toward graduate research in astrophysics or aerospace systems, with computational methods for studying space as the connecting thread — using the engineering side of my degree to understand how spacecraft and instruments are built, and the computing side to model and analyse what they observe. The Summer School of Rocket Science this July is a step toward that: moving from reading about propulsion and orbital mechanics to working with them directly.
               </p>
             </div>
-
-            <div class="card glass-cool fade-in" style="animation-delay:.2s">
-              <p style="font-size:1.05rem;line-height:1.85;color:rgba(248,248,252,.9)">
-                Through my publication <span style="color:#8b5cf6;font-weight:600">The Redshift Asterism</span>, I write about cosmology, astrophysics, and the unresolved frontiers of modern science. Alongside that, I work as a <span style="color:#c084fc;font-weight:600">Research Intern at ExoVista</span> and contribute to citizen science initiatives through NASA and Zooniverse. Scientific computing is the thread that ties it all together — code is how I explore, model, and communicate ideas that otherwise live only in equations.
-              </p>
-            </div>
-
-            <div class="animated-gradient-border fade-in" style="animation-delay:.3s">
-              <div style="padding:1.75rem;position:relative;z-index:1">
-                <p style="font-size:.95rem;line-height:1.8;color:rgba(248,248,252,.85)">
-                  <span style="color:#e879f9;font-weight:600">Long-term goal:</span> To contribute to astrophysics and space exploration through research, aerospace engineering, and scientific computing — bridging the gap between the universe we study and the technology we build to explore it.
-                </p>
-              </div>
-            </div>
-
-            <!-- Currently Working On -->
-            <div class="fade-in" id="cwo-block" style="animation-delay:.4s">
-              <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.65rem"><span style="animation:pulse 2s infinite;display:inline-block">⚡</span> Currently Working On</h3>
-              <div style="display:flex;flex-direction:column;gap:.75rem">
-                <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.9rem">Beginning my B.Tech in Aerospace Engineering at SRM Institute of Science and Technology (SRMIST) — building the engineering foundation for space research</span></div>
-                <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.9rem">Preparing for the Summer School of Rocket Science (July – September 2026)</span></div>
-                <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.9rem">Writing and publishing research-driven articles for The Redshift Asterism</span></div>
-                <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.9rem">Expanding research experience through my internship at ExoVista</span></div>
-                <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.9rem">Developing scientific computing skills through Python and independent computational practice</span></div>
-              </div>
-            </div>
-
-            <div class="animated-gradient-border fade-in" style="animation-delay:.5s">
-              <div style="padding:1.75rem;position:relative;z-index:1">
-                <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1rem"><span style="font-size:1.375rem">🎯</span><h3 style="font-size:1.1rem;font-weight:700;color:#e879f9">Current Focus Areas</h3></div>
-                <div style="display:flex;flex-wrap:wrap;gap:.65rem">
-                  <span class="focus-tag">🚀 Aerospace Engineering</span>
-                  <span class="focus-tag">🌌 Cosmology &amp; Astrophysics</span>
-                  <span class="focus-tag">💻 Scientific Computing</span>
-                  <span class="focus-tag">🔬 Independent Research</span>
-                  <span class="focus-tag">📡 Space Technology</span>
-                  <span class="focus-tag">✍️ Science Communication</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= EXPERIENCE ======= -->
-      <section id="experience">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(139,92,246,.05);top:33%;right:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:sway 3s ease-in-out infinite">💼</span>
-            <h2>Professional <span class="text-gradient-cool">Experience</span></h2>
           </div>
 
-          <div class="timeline">
-            <!-- ExoVista -->
-            <div class="timeline-item fade-in-left" style="animation-delay:.1s">
-              <div class="timeline-dot" style="background:#a855f7">🌟</div>
-              <div class="card glass" style="border:1px solid rgba(168,85,247,.3)">
-                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;margin-bottom:.875rem">
-                  <div><h3 style="font-size:1.1rem;font-weight:700;color:#a855f7">ExoVista</h3><p style="font-weight:600;font-size:.875rem">Research Intern</p></div>
-                  <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.05);padding:.2rem .65rem;border-radius:9999px;height:fit-content">June 2026 – Present</span>
-                </div>
-                <p style="color:var(--muted);font-size:.875rem">Contributing to astronomy and space science research through collaborative research activities at ExoVista.</p>
-              </div>
-            </div>
-
-            <!-- Redshift Asterism -->
-            <div class="timeline-item fade-in-right" style="animation-delay:.15s">
-              <div class="timeline-dot" style="background:#e879f9">🌌</div>
-              <div class="card glass" style="border:1px solid rgba(232,121,249,.3)">
-                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;margin-bottom:.875rem">
-                  <div><h3 style="font-size:1.1rem;font-weight:700;color:#e879f9">The Redshift Asterism</h3><p style="font-weight:600;font-size:.875rem">Founder &amp; Author</p></div>
-                  <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.05);padding:.2rem .65rem;border-radius:9999px;height:fit-content">June 2026 – Present</span>
-                </div>
-                <p style="color:var(--muted);font-size:.875rem">Founder and author of an independent science publication focused on cosmology, astrophysics, and astronomy. Producing research-driven articles that bridge scientific concepts and public understanding.</p>
-              </div>
-            </div>
-
-            <!-- Nalanda MUN -->
-            <div class="timeline-item fade-in-left" style="animation-delay:.2s">
-              <div class="timeline-dot" style="background:#8b5cf6">🎤</div>
-              <div class="card glass" style="border:1px solid rgba(139,92,246,.3)">
-                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;margin-bottom:.875rem">
-                  <div><h3 style="font-size:1.1rem;font-weight:700;color:#8b5cf6">The Nalanda MUN</h3><p style="font-weight:600;font-size:.875rem">Secretariat Member</p></div>
-                  <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.05);padding:.2rem .65rem;border-radius:9999px;height:fit-content">June – September 2025</span>
-                </div>
-                <ul style="list-style:none;display:flex;flex-direction:column;gap:.45rem">
-                  <li class="project-list-item"><span style="color:#8b5cf6">→</span><span>Managed and curated content for official MUN communications</span></li>
-                  <li class="project-list-item"><span style="color:#8b5cf6">→</span><span>Designed digital campaigns to enhance outreach and delegate participation</span></li>
-                  <li class="project-list-item"><span style="color:#8b5cf6">→</span><span>Oversaw social media strategy and promotional content</span></li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Content Creator -->
-            <div class="timeline-item fade-in-right" style="animation-delay:.25s">
-              <div class="timeline-dot" style="background:#c084fc">✍️</div>
-              <div class="card glass" style="border:1px solid rgba(192,132,252,.3)">
-                <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;margin-bottom:.875rem">
-                  <div><h3 style="font-size:1.1rem;font-weight:700;color:#c084fc">Social Media Content Creator</h3><p style="font-weight:600;font-size:.875rem">Writer &amp; Poet</p></div>
-                  <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.05);padding:.2rem .65rem;border-radius:9999px;height:fit-content">September 2024 – November 2025</span>
-                </div>
-                <p style="color:var(--muted);font-size:.875rem;margin-bottom:.75rem">Created emotionally resonant micro-poetry and reflective writing on social media, achieving viral reach of 1M–3.2M+ views on individual posts. Developed strong skills in audience engagement, narrative craft, and communicating ideas with clarity and impact — skills that directly support science communication.</p>
-              </div>
+          <div class="fi" style="transition-delay:.34s">
+            <div class="sec-label" style="margin-bottom:.9rem">Currently Working On</div>
+            <div style="display:flex;flex-direction:column;gap:.65rem">
+              <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.875rem">Beginning B.Tech Aerospace Engineering at SRMIST, Kattankulathur Campus</span></div>
+              <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.875rem">Research internship at ExoVista — data analysis and collaborative astronomy research</span></div>
+              <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.875rem">Writing and publishing research-driven articles for The Redshift Asterism</span></div>
+              <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.875rem">Preparing for Summer School of Rocket Science (July – September 2026)</span></div>
+              <div class="cwo-item"><div class="cwo-dot"></div><span style="font-size:.875rem">Developing Python skills for scientific computing and data analysis</span></div>
             </div>
           </div>
 
-          <!-- Education -->
-          <div style="margin-top:4.5rem" class="fade-in">
-            <div class="section-header" style="margin-bottom:1.75rem"><span class="emoji" style="animation:float 2s ease-in-out infinite">🎓</span><h2 style="font-size:1.6rem">Education</h2></div>
-            <div class="edu-grid">
-              <div class="edu-card glass-warm fade-in" style="animation-delay:.1s">
-                <div class="edu-content">
-                  <span class="edu-emoji">🚀</span>
-                  <div>
-                    <h3 class="edu-title">SRM Institute of Science and Technology (SRMIST), Kattankulathur Campus</h3>
-                    <p class="edu-period">2026 – 2030</p>
-                    <p class="edu-desc" style="font-weight:600;color:rgba(248,248,252,.85)">B.Tech — Aerospace Engineering</p>
-                    <p class="edu-desc" style="margin-top:.2rem">Kattankulathur Campus, Tamil Nadu</p>
-                  </div>
-                </div>
+          <div class="agb fi" style="transition-delay:.42s">
+            <div style="padding:1.6rem;position:relative;z-index:1">
+              <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.9rem">
+                <span style="font-size:1.2rem">🎯</span>
+                <h3 style="font-size:.95rem;font-weight:700;color:var(--c5)">Active Areas</h3>
               </div>
-              <div class="edu-card glass-cool fade-in" style="animation-delay:.2s">
-                <div class="edu-content">
-                  <span class="edu-emoji">🏫</span>
-                  <div>
-                    <h3 class="edu-title">St. Teresa School, Indirapuram</h3>
-                    <p class="edu-period">2014 – 2026</p>
-                    <p class="edu-desc" style="font-weight:600;color:rgba(248,248,252,.85)">Secondary & Senior Secondary Education</p>
-                    <p class="edu-desc" style="margin-top:.2rem">Indirapuram, Ghaziabad, Uttar Pradesh</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= RESEARCH EXPERIENCE ======= -->
-      <section id="research">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(168,85,247,.06);top:0;left:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:pulse 2s ease-in-out infinite">🔭</span>
-            <h2>Research <span class="text-gradient">Experience</span></h2>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:1.5rem">
-            <div class="research-card fade-in" style="animation-delay:.1s">
-              <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.875rem">
-                <div style="display:flex;align-items:center;gap:.75rem">
-                  <span style="font-size:1.625rem">🌟</span>
-                  <div>
-                    <h3 style="font-size:1.15rem;font-weight:700;color:#a855f7">ExoVista</h3>
-                    <p style="font-weight:600;font-size:.875rem">Research Intern</p>
-                    <a href="https://exovista.org/" target="_blank" rel="noopener noreferrer" style="color:#8b5cf6;font-size:.75rem;font-family:'Space Grotesk',monospace">exovista.org ↗</a>
-                  </div>
-                </div>
-                <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(168,85,247,.1);padding:.3rem .75rem;border-radius:9999px;border:1px solid rgba(168,85,247,.2);white-space:nowrap;height:fit-content">June 2026 – Present</span>
-              </div>
-              <p style="color:rgba(248,248,252,.8);line-height:1.75;font-size:.9rem">Contributing to astronomy and space science research through collaborative research activities at ExoVista. This internship represents my entry into professional research alongside my undergraduate studies in Aerospace Engineering at SRMIST.</p>
-            </div>
-
-            <div class="research-card fade-in" style="animation-delay:.2s;border-color:rgba(139,92,246,.2)">
-              <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.875rem">
-                <div style="display:flex;align-items:center;gap:.75rem">
-                  <span style="font-size:1.625rem">🔭</span>
-                  <div>
-                    <h3 style="font-size:1.15rem;font-weight:700;color:#8b5cf6">NASA – Citizen Scientist</h3>
-                    <p style="font-weight:600;font-size:.875rem">Open Science Contributor</p>
-                  </div>
-                </div>
-                <span style="font-size:.75rem;color:var(--muted);font-family:'Space Grotesk',monospace;background:rgba(139,92,246,.1);padding:.3rem .75rem;border-radius:9999px;border:1px solid rgba(139,92,246,.2);white-space:nowrap;height:fit-content">January 2026 – Present</span>
-              </div>
-              <p style="color:rgba(248,248,252,.8);line-height:1.75;font-size:.9rem">Participating in NASA-affiliated citizen science and open science initiatives. Contributing to project-based research via Zooniverse and engaging in collaborative analysis through the Open Science Data Repository (OSDR) Analysis Working Group.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= PUBLICATIONS ======= -->
-      <section id="publications">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(232,121,249,.06);top:0;right:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:float 2s ease-in-out infinite">📰</span>
-            <h2>Publications &amp; <span class="text-gradient">Science Communication</span></h2>
-          </div>
-
-          <div class="animated-gradient-border fade-in" style="animation-delay:.1s">
-            <div style="padding:2.25rem;position:relative;z-index:1">
-              <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:1.5rem;margin-bottom:1.75rem">
-                <div>
-                  <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:.75rem">
-                    <span style="font-size:2rem">🌌</span>
-                    <div>
-                      <h3 style="font-size:1.5rem;font-weight:700">The Redshift Asterism</h3>
-                      <p style="color:#e879f9;font-size:.85rem;font-family:'Space Grotesk',monospace">Independent Science Publication · Founded 2026</p>
-                    </div>
-                  </div>
-                </div>
-                <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex-shrink:0">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                  Read the Publication
-                </a>
-              </div>
-
-              <p style="color:rgba(248,248,252,.85);line-height:1.8;font-size:.975rem;margin-bottom:1.75rem">
-                An independent science publication where I write research-driven articles exploring cosmology, astrophysics, astronomy, and some of the biggest unanswered questions in modern science. The goal is to bridge rigorous scientific concepts with public understanding — writing for readers who are curious and ready to think deeply.
-              </p>
-
-              <div>
-                <p style="font-size:.8rem;color:var(--muted);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem">Topics Covered</p>
-                <div style="display:flex;flex-wrap:wrap">
-                  <span class="pub-topic">🌌 Cosmology</span>
-                  <span class="pub-topic">⭐ Astrophysics</span>
-                  <span class="pub-topic">🔭 Astronomy</span>
-                  <span class="pub-topic">🕳️ Black Holes</span>
-                  <span class="pub-topic">🚀 Space Exploration</span>
-                  <span class="pub-topic">⚛️ Fundamental Physics</span>
-                  <span class="pub-topic">🌠 Dark Matter &amp; Dark Energy</span>
-                  <span class="pub-topic">🌍 Origins of the Universe</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= PROJECTS ======= -->
-      <section id="projects">
-        <div class="section-blur" style="width:20rem;height:20rem;background:rgba(192,132,252,.05);bottom:0;left:25%;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:float 2s ease-in-out infinite">🛠️</span>
-            <h2>Technical <span class="text-gradient">Projects</span></h2>
-          </div>
-          <p class="fade-in" style="font-size:.975rem;color:var(--muted);margin-bottom:2.5rem;max-width:46rem;animation-delay:.1s">
-            Programming as a tool for research, problem-solving, and computational exploration — in support of my broader interests in aerospace engineering and space science.
-          </p>
-
-          <div style="display:flex;flex-direction:column;gap:1.25rem">
-            <div class="project-card glass fade-in" style="border:1px solid rgba(168,85,247,.2);animation-delay:.15s">
-              <div class="project-header" onclick="toggleProject('rpg')">
-                <div style="flex:1;min-width:0">
-                  <div class="project-title"><span class="emoji">🎮</span><h3>RPG Mini Game</h3></div>
-                  <p class="project-tech" style="color:#a855f7">Python · Streamlit · Game Logic Design</p>
-                  <p class="project-desc">A logic-driven game built to practice structured programming, deployed as a web app with Streamlit.</p>
-                </div>
-                <span class="project-chevron open" id="chevron-rpg" style="color:#a855f7">›</span>
-              </div>
-              <div class="project-content open" id="content-rpg">
-                <p style="color:rgba(248,248,252,.8);line-height:1.75;font-size:.9rem;margin-bottom:1.25rem">Originally a Python CLI project, transformed into a web application. Players distribute stat points across Strength, Intelligence, and Charisma to discover hidden legendary archetypes — a system built to practise constraint-based design and structured thinking.</p>
-                <div style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem">
-                  <div class="project-list-item"><span style="color:#c084fc">→</span><span>Three discoverable legendary archetypes embedded in the game logic</span></div>
-                  <div class="project-list-item"><span style="color:#c084fc">→</span><span>Stat validation, hint system, and witty feedback</span></div>
-                  <div class="project-list-item"><span style="color:#c084fc">→</span><span>Deployed live via Streamlit</span></div>
-                </div>
-                <div class="project-buttons">
-                  <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    Play Live Demo
-                  </a>
-                  <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-                    View Code
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="project-card glass fade-in" style="border:1px solid rgba(139,92,246,.2);animation-delay:.25s">
-              <div class="project-header" onclick="toggleProject('tasktracker')">
-                <div style="flex:1;min-width:0">
-                  <div class="project-title"><span class="emoji">📋</span><h3>Task Tracker</h3></div>
-                  <p class="project-tech" style="color:#8b5cf6">Python · File Handling · CLI Application</p>
-                  <p class="project-desc">A console-based task management app exploring data persistence and clean architecture in Python.</p>
-                </div>
-                <span class="project-chevron" id="chevron-tasktracker" style="color:#8b5cf6">›</span>
-              </div>
-              <div class="project-content" id="content-tasktracker">
-                <p style="color:rgba(248,248,252,.8);line-height:1.75;font-size:.9rem;margin-bottom:1.25rem">A practical CLI application for managing tasks with persistent CSV storage. Built to understand file handling, structured data management, and interface design at the command-line level.</p>
-                <div style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.25rem">
-                  <div class="project-list-item"><span style="color:#8b5cf6">→</span><span>Add, update, delete tasks with priority and due dates</span></div>
-                  <div class="project-list-item"><span style="color:#8b5cf6">→</span><span>Persistent CSV-based data storage</span></div>
-                  <div class="project-list-item"><span style="color:#8b5cf6">→</span><span>Clean command-line interface</span></div>
-                </div>
-                <div class="project-buttons">
-                  <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-                    View Code
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card glass fade-in" style="margin-top:2.5rem;animation-delay:.35s">
-            <h3 style="font-size:1.2rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.65rem"><span>🔧</span> Technical Proficiencies</h3>
-            <div class="grid-2">
-              <div style="padding:.875rem;border-radius:.875rem;background:rgba(255,255,255,.02);border:1px solid rgba(168,85,247,.1)"><span style="color:#a855f7;font-weight:700">Languages: </span><span style="color:var(--muted)">Python, SQL</span></div>
-              <div style="padding:.875rem;border-radius:.875rem;background:rgba(255,255,255,.02);border:1px solid rgba(139,92,246,.1)"><span style="color:#8b5cf6;font-weight:700">Libraries: </span><span style="color:var(--muted)">Streamlit</span></div>
-              <div style="padding:.875rem;border-radius:.875rem;background:rgba(255,255,255,.02);border:1px solid rgba(192,132,252,.1)"><span style="color:#c084fc;font-weight:700">Tools: </span><span style="color:var(--muted)">Git, GitHub, VS Code, MySQL, Krita, Canva, Gimp, Notion</span></div>
-              <div style="padding:.875rem;border-radius:.875rem;background:rgba(255,255,255,.02);border:1px solid rgba(124,58,237,.1)"><span style="color:#7c3aed;font-weight:700">Focus: </span><span style="color:var(--muted)">Scientific Computing, Data Analysis</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= SKILLS ======= -->
-      <section id="skills">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(139,92,246,.05);top:0;right:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:spin 20s linear infinite">◈</span>
-            <h2>Technical <span class="text-gradient-cool">Skills</span></h2>
-          </div>
-
-          <div class="grid-2" style="gap:1.5rem">
-            <div class="card glass fade-in" style="border-color:rgba(168,85,247,.2);animation-delay:.1s">
-              <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem"><span style="font-size:1.625rem">🐍</span><h3 style="font-size:1.1rem;font-weight:700;color:#a855f7">Programming</h3></div>
-              <div style="display:flex;flex-direction:column;gap:.55rem">
-                <div class="skill-item"><div class="skill-dot" style="background:#a855f7"></div><span style="font-size:.85rem;font-weight:500">Python</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#a855f7;animation-delay:.1s"></div><span style="font-size:.85rem;font-weight:500">Scientific Computing</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#a855f7;animation-delay:.2s"></div><span style="font-size:.85rem;font-weight:500">SQL &amp; Data Handling</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#a855f7;animation-delay:.3s"></div><span style="font-size:.85rem;font-weight:500">Git &amp; GitHub</span></div>
-              </div>
-            </div>
-
-            <div class="card glass fade-in" style="border-color:rgba(139,92,246,.2);animation-delay:.2s">
-              <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem"><span style="font-size:1.625rem">🔬</span><h3 style="font-size:1.1rem;font-weight:700;color:#8b5cf6">Research</h3></div>
-              <div style="display:flex;flex-direction:column;gap:.55rem">
-                <div class="skill-item"><div class="skill-dot" style="background:#8b5cf6"></div><span style="font-size:.85rem;font-weight:500">Scientific Writing</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#8b5cf6;animation-delay:.1s"></div><span style="font-size:.85rem;font-weight:500">Research Communication</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#8b5cf6;animation-delay:.2s"></div><span style="font-size:.85rem;font-weight:500">Literature Review</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#8b5cf6;animation-delay:.3s"></div><span style="font-size:.85rem;font-weight:500">Observational Astronomy &amp; Citizen Science</span></div>
-              </div>
-            </div>
-
-            <div class="card glass fade-in" style="border-color:rgba(192,132,252,.2);animation-delay:.3s">
-              <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem"><span style="font-size:1.625rem">🚀</span><h3 style="font-size:1.1rem;font-weight:700;color:#c084fc">Technical Interests</h3></div>
-              <div style="display:flex;flex-direction:column;gap:.55rem">
-                <div class="skill-item"><div class="skill-dot" style="background:#c084fc"></div><span style="font-size:.85rem;font-weight:500">Aerospace Engineering</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#c084fc;animation-delay:.1s"></div><span style="font-size:.85rem;font-weight:500">Astrophysics</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#c084fc;animation-delay:.2s"></div><span style="font-size:.85rem;font-weight:500">Cosmology</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#c084fc;animation-delay:.3s"></div><span style="font-size:.85rem;font-weight:500">Space Technology</span></div>
-              </div>
-            </div>
-
-            <div class="card glass fade-in" style="border-color:rgba(124,58,237,.2);animation-delay:.4s">
-              <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem"><span style="font-size:1.625rem">✍️</span><h3 style="font-size:1.1rem;font-weight:700;color:#7c3aed">Communication</h3></div>
-              <div style="display:flex;flex-direction:column;gap:.55rem">
-                <div class="skill-item"><div class="skill-dot" style="background:#7c3aed"></div><span style="font-size:.85rem;font-weight:500">Science Communication</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#7c3aed;animation-delay:.1s"></div><span style="font-size:.85rem;font-weight:500">Technical Writing</span></div>
-                <div class="skill-item"><div class="skill-dot" style="background:#7c3aed;animation-delay:.2s"></div><span style="font-size:.85rem;font-weight:500">Public Speaking</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.875rem;margin-top:2rem" class="fade-in" style="animation-delay:.5s">
-            <div class="stat-card glass" style="border-color:rgba(168,85,247,.2)"><div class="stat-value" style="color:#a855f7">Aerospace</div><div class="stat-label">Engineering</div></div>
-            <div class="stat-card glass" style="border-color:rgba(139,92,246,.2)"><div class="stat-value" style="color:#8b5cf6">Python</div><div class="stat-label">Computing</div></div>
-            <div class="stat-card glass" style="border-color:rgba(192,132,252,.2)"><div class="stat-value" style="color:#c084fc">Active</div><div class="stat-label">Researcher</div></div>
-            <div class="stat-card glass" style="border-color:rgba(124,58,237,.2)"><div class="stat-value" style="color:#7c3aed">Science</div><div class="stat-label">Writer</div></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= RESEARCH INTERESTS ======= -->
-      <section id="interests">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(232,121,249,.05);top:0;left:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:float 2s ease-in-out infinite">🌌</span>
-            <h2>Research <span class="text-gradient">Interests</span></h2>
-          </div>
-          <p class="fade-in" style="font-size:1rem;color:var(--muted);margin-bottom:2.5rem;max-width:44rem;animation-delay:.1s">
-            The fields I intend to pursue academically and professionally — areas where I want to contribute through research, computation, and engineering.
-          </p>
-          <div style="display:flex;flex-wrap:wrap;gap:.875rem" class="fade-in" style="animation-delay:.2s">
-            <span class="ri-tag">🌌 Cosmology</span>
-            <span class="ri-tag">⭐ Astrophysics</span>
-            <span class="ri-tag">💻 Computational Astrophysics</span>
-            <span class="ri-tag">🔢 Scientific Computing</span>
-            <span class="ri-tag">🕳️ General Relativity</span>
-            <span class="ri-tag">🛸 Orbital Mechanics</span>
-            <span class="ri-tag">🛰️ Space Systems</span>
-            <span class="ri-tag">🚀 Space Technology</span>
-            <span class="ri-tag">🌠 Observational Astronomy</span>
-            <span class="ri-tag">🔭 Space Exploration</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- ======= PROFESSIONAL DEVELOPMENT ======= -->
-      <section id="profdev">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(232,121,249,.05);top:0;left:0;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:pulse 2s ease-in-out infinite">📡</span>
-            <h2>Professional <span class="text-gradient">Development</span></h2>
-          </div>
-          <p class="fade-in" style="font-size:.975rem;color:var(--muted);margin-bottom:2.5rem;max-width:46rem;animation-delay:.1s">
-            Continuous engagement with the global space and research community, beyond formal coursework.
-          </p>
-
-          <div style="display:flex;flex-direction:column;gap:1.25rem">
-            <div class="pd-item fade-in" style="animation-delay:.1s">
-              <span class="pd-tag upcoming">⏳ Upcoming</span>
-              <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:.4rem;color:#e879f9">Summer School of Rocket Science</h3>
-              <p style="font-size:.8rem;color:var(--muted);margin-bottom:.65rem;font-family:'Space Grotesk',monospace">12 July 2026 – 12 September 2026</p>
-              <p style="color:rgba(248,248,252,.85);font-size:.9rem;line-height:1.7">Organised by the <strong>Propagation Institute of Space and Technology</strong> in collaboration with <strong>Indian Space School</strong>. A dedicated programme covering rocket science fundamentals, aerospace concepts, and practical space engineering.</p>
-            </div>
-
-            <div class="pd-item fade-in" style="animation-delay:.2s">
-              <span class="pd-tag attended">✓ Attended</span>
-              <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:.4rem;color:#a855f7">Propagation Space Month 2026</h3>
-              <p style="font-size:.8rem;color:var(--muted);margin-bottom:.65rem;font-family:'Space Grotesk',monospace">2026 · Propagation Institute of Space and Technology</p>
-              <p style="color:rgba(248,248,252,.85);font-size:.9rem;line-height:1.7;margin-bottom:1rem">Attended Propagation Space Month 2026 organised by the Propagation Institute of Space and Technology. Participation certificate will be added once available after 30 June 2026.</p>
-              <a href="https://propagationinstitute.org/events/6a1523a4afa4c261b195b3b9" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size:.75rem;padding:.45rem .875rem">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                View Event
-              </a>
-            </div>
-
-            <div class="pd-item fade-in" style="animation-delay:.3s">
-              <span class="pd-tag continuous">∞ Continuous</span>
-              <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:.4rem;color:#8b5cf6">Webinars, Conferences &amp; Workshops</h3>
-              <p style="color:rgba(248,248,252,.85);font-size:.9rem;line-height:1.7;margin-bottom:.875rem">Regularly participating in educational events hosted by recognised space and research organisations — actively engaging with the global space community beyond university coursework.</p>
               <div style="display:flex;flex-wrap:wrap;gap:.55rem">
-                <span class="tag-pill">ISAAC</span>
-                <span class="tag-pill">SEDS</span>
-                <span class="tag-pill">SHE in Space</span>
-                <span class="tag-pill">Propagation Institute of Space &amp; Technology</span>
-                <span class="tag-pill">Indian Space School</span>
+                <span class="focus-tag">🚀 Aerospace Engineering</span>
+                <span class="focus-tag">🌌 Cosmology &amp; Astrophysics</span>
+                <span class="focus-tag">💻 Scientific Computing</span>
+                <span class="focus-tag">🔬 Independent Research</span>
+                <span class="focus-tag">📡 Space Technology</span>
+                <span class="focus-tag">✍️ Science Communication</span>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ======= VISUAL TIMELINE ======= -->
-      <section id="timeline">
-        <div class="section-blur" style="width:18rem;height:18rem;background:rgba(139,92,246,.05);top:50%;right:0;"></div>
-        <div class="max-w-4xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:float 2s ease-in-out infinite">⏳</span>
-            <h2>Academic <span class="text-gradient">Timeline</span></h2>
+    <!-- ═══════ APPROACH ═══════ -->
+    <section id="approach">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(192,132,252,.04);top:20%;right:-3rem;"></div>
+      <div class="w4" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:rotateWig 5s ease-in-out infinite">🧭</span><h2>How I <span class="tg">Approach Work</span></h2></div>
+
+        <div style="display:flex;flex-direction:column;gap:1.1rem">
+          <div class="card gl fi" style="border-color:rgba(168,85,247,.14);transition-delay:.08s">
+            <p style="font-size:.92rem;line-height:1.82;color:rgba(238,238,245,.85)">
+              When a problem is unfamiliar — a new physics framework, an unfamiliar Streamlit API, a research question with no clear starting point — I start by mapping what is already known and where the gaps are, rather than guessing at a solution. The RPG project's archetype logic, for instance, started as a flowchart on paper before it became conditional branches in code.
+            </p>
+          </div>
+          <div class="card gl fi" style="border-color:rgba(139,92,246,.14);transition-delay:.14s">
+            <p style="font-size:.92rem;line-height:1.82;color:rgba(238,238,245,.85)">
+              I learn new technical material by building with it immediately rather than finishing a course first — the Task Tracker came out of needing to understand file I/O in Python, not from a tutorial assignment. This usually means early versions are rough, but it surfaces the parts of a concept that documentation alone doesn't make obvious.
+            </p>
+          </div>
+          <div class="card gl fi" style="border-color:rgba(192,132,252,.14);transition-delay:.2s">
+            <p style="font-size:.92rem;line-height:1.82;color:rgba(238,238,245,.85)">
+              In engineering and research work, I separate the question of whether something works from the question of whether it's built well — a script that produces the right output but can't be extended is, to me, half-finished. That distinction shapes how I write code, structure articles for The Redshift Asterism, and approach problems at ExoVista: get a working version, then rebuild the parts that won't scale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ EXPERIENCE ═══════ -->
+    <section id="experience">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(139,92,246,.04);top:30%;right:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:swayWig 3s ease-in-out infinite">💼</span><h2>Professional <span class="tgc">Experience</span></h2></div>
+
+        <div class="tl">
+          <div class="tl-item fil" style="transition-delay:.08s">
+            <div class="tl-dot" style="background:#a855f7;font-size:.7rem">🌟</div>
+            <div class="card gl" style="border:1px solid rgba(168,85,247,.24)">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-bottom:.75rem">
+                <div><h3 style="font-size:1rem;font-weight:700;color:#a855f7">ExoVista</h3><p style="font-weight:600;font-size:.82rem">Research Intern</p></div>
+                <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.04);padding:.18rem .58rem;border-radius:9999px;height:fit-content">June 2026 – Present</span>
+              </div>
+              <p style="color:var(--fg2);font-size:.84rem;line-height:1.68">Contributing to astronomy and space science research at ExoVista, working with collected data and research findings as part of the team's ongoing projects. First professional research position, running alongside undergraduate engineering coursework.</p>
+            </div>
           </div>
 
-          <div class="vtimeline fade-in" style="animation-delay:.1s">
-            <div class="vtl-item">
-              <div class="vtl-dot"></div>
-              <div class="vtl-year">2024</div>
-              <div class="vtl-events">
-                <div class="vtl-event">Started sharing writing publicly — building a voice in science communication</div>
+          <div class="tl-item fir" style="transition-delay:.14s">
+            <div class="tl-dot" style="background:#e879f9;font-size:.7rem">🌌</div>
+            <div class="card gl" style="border:1px solid rgba(232,121,249,.24)">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-bottom:.75rem">
+                <div><h3 style="font-size:1rem;font-weight:700;color:#e879f9">The Redshift Asterism</h3><p style="font-weight:600;font-size:.82rem">Founder &amp; Author</p></div>
+                <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.04);padding:.18rem .58rem;border-radius:9999px;height:fit-content">June 2026 – Present</span>
+              </div>
+              <p style="color:var(--fg2);font-size:.84rem;line-height:1.68">Founded and edits an independent science publication covering cosmology, astrophysics, and astronomy. Writes research-driven articles that translate peer-reviewed science for a general audience, building skills in scientific communication and editorial judgment.</p>
+            </div>
+          </div>
+
+          <div class="tl-item fil" style="transition-delay:.2s">
+            <div class="tl-dot" style="background:#8b5cf6;font-size:.7rem">🎤</div>
+            <div class="card gl" style="border:1px solid rgba(139,92,246,.24)">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-bottom:.75rem">
+                <div><h3 style="font-size:1rem;font-weight:700;color:#8b5cf6">The Nalanda MUN</h3><p style="font-weight:600;font-size:.82rem">Secretariat Member</p></div>
+                <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.04);padding:.18rem .58rem;border-radius:9999px;height:fit-content">June – September 2025</span>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:.38rem">
+                <li class="proj-li"><span style="color:#8b5cf6">→</span><span>Curated and managed content for official MUN communications and outreach</span></li>
+                <li class="proj-li"><span style="color:#8b5cf6">→</span><span>Designed digital campaigns that increased delegate participation</span></li>
+                <li class="proj-li"><span style="color:#8b5cf6">→</span><span>Coordinated social media strategy and event-related communications</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item fir" style="transition-delay:.26s">
+            <div class="tl-dot" style="background:#c084fc;font-size:.7rem">✍️</div>
+            <div class="card gl" style="border:1px solid rgba(192,132,252,.24)">
+              <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem;margin-bottom:.75rem">
+                <div><h3 style="font-size:1rem;font-weight:700;color:#c084fc">Social Media Content Creator</h3><p style="font-weight:600;font-size:.82rem">Writer &amp; Poet</p></div>
+                <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(255,255,255,.04);padding:.18rem .58rem;border-radius:9999px;height:fit-content">September 2024 – November 2025</span>
+              </div>
+              <p style="color:var(--fg2);font-size:.84rem;line-height:1.68">Wrote micro-poetry and reflective content reaching 1M–3.2M+ views per post. Refined skills in concise writing, audience engagement, and communicating ideas with clarity — directly applicable to science communication.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:4rem" class="fi">
+          <div class="sh" style="margin-bottom:1.5rem"><span class="ico" style="animation:floatY 2.2s ease-in-out infinite">🎓</span><h2 style="font-size:1.5rem">Education</h2></div>
+          <div class="edu-grid">
+            <div class="edu-card glw fi" style="transition-delay:.08s">
+              <div class="edu-inner">
+                <span class="edu-ico">🚀</span>
+                <div>
+                  <div class="edu-name">SRM Institute of Science and Technology (SRMIST), Kattankulathur Campus</div>
+                  <div class="edu-yr">2026 – 2030</div>
+                  <div class="edu-desc" style="font-weight:600;color:rgba(238,238,245,.85)">B.Tech — Aerospace Engineering</div>
+                </div>
               </div>
             </div>
-            <div class="vtl-item">
-              <div class="vtl-dot"></div>
-              <div class="vtl-year">2025</div>
-              <div class="vtl-events">
-                <div class="vtl-event">Expanded independent learning in astronomy and scientific computing</div>
-                <div class="vtl-event">Expanded scientific computing skills through Python and independent study</div>
-                <div class="vtl-event">Secretariat Member, The Nalanda MUN</div>
-              </div>
-            </div>
-            <div class="vtl-item">
-              <div class="vtl-dot"></div>
-              <div class="vtl-year">2026</div>
-              <div class="vtl-events">
-                <div class="vtl-event">Joined NASA citizen science initiatives (Zooniverse, OSDR)</div>
-                <div class="vtl-event">Founded The Redshift Asterism — independent cosmology publication</div>
-                <div class="vtl-event">Joined ExoVista as Research Intern</div>
-                <div class="vtl-event">Began B.Tech in Aerospace Engineering at SRM Institute of Science and Technology (SRMIST), Kattankulathur Campus</div>
-                <div class="vtl-event">Attended Propagation Space Month 2026</div>
-                <div class="vtl-event">Enrolled in Summer School of Rocket Science (July – September 2026)</div>
-              </div>
-            </div>
-            <div class="vtl-item" style="opacity:.65">
-              <div class="vtl-dot" style="border-color:rgba(168,85,247,.35)"></div>
-              <div class="vtl-year" style="color:rgba(168,85,247,.45)">Future</div>
-              <div class="vtl-events">
-                <div class="vtl-event" style="color:rgba(248,248,252,.45)">Undergraduate research in aerospace and astrophysics</div>
-                <div class="vtl-event" style="color:rgba(248,248,252,.45)">Aerospace and space technology projects</div>
-                <div class="vtl-event" style="color:rgba(248,248,252,.45)">Graduate studies in astrophysics or space science</div>
-                <div class="vtl-event" style="color:rgba(248,248,252,.45)">Contributing to space research and science communication</div>
+            <div class="edu-card glc fi" style="transition-delay:.14s">
+              <div class="edu-inner">
+                <span class="edu-ico">🏫</span>
+                <div>
+                  <div class="edu-name">St. Teresa School, Indirapuram</div>
+                  <div class="edu-yr">2014 – 2026</div>
+                  <div class="edu-desc" style="font-weight:600;color:rgba(238,238,245,.85)">Secondary &amp; Senior Secondary</div>
+                  <div class="edu-desc" style="margin-top:.18rem">Ghaziabad, Uttar Pradesh</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ======= ACHIEVEMENTS ======= -->
-      <section id="achievements">
-        <div class="section-blur" style="width:20rem;height:20rem;background:rgba(232,121,249,.05);top:0;left:33%;"></div>
-        <div class="max-w-5xl" style="position:relative;z-index:1">
-          <div class="section-header fade-in">
-            <span class="emoji" style="animation:trophy 2s ease-in-out infinite">🏆</span>
-            <h2>Achievements &amp; <span class="text-gradient">Recognition</span></h2>
+    <!-- ═══════ RESEARCH ═══════ -->
+    <section id="research">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(168,85,247,.04);top:0;left:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:pulse 2.5s ease-in-out infinite">🔭</span><h2>Research <span class="tg">Experience</span></h2></div>
+
+        <div style="display:flex;flex-direction:column;gap:1.35rem">
+          <div class="rc fi" style="transition-delay:.08s">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.875rem;margin-bottom:.75rem">
+              <div style="display:flex;align-items:center;gap:.7rem">
+                <span style="font-size:1.5rem">🌟</span>
+                <div>
+                  <h3 style="font-size:1.05rem;font-weight:700;color:#a855f7">ExoVista</h3>
+                  <p style="font-weight:600;font-size:.82rem">Research Intern</p>
+                  <a href="https://exovista.org/" target="_blank" rel="noopener noreferrer" style="color:#8b5cf6;font-size:.7rem;font-family:'Space Grotesk',monospace">exovista.org ↗</a>
+                </div>
+              </div>
+              <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(168,85,247,.08);padding:.26rem .68rem;border-radius:9999px;border:1px solid rgba(168,85,247,.16);white-space:nowrap;height:fit-content">June 2026 – Present</span>
+            </div>
+            <p style="color:rgba(238,238,245,.78);line-height:1.72;font-size:.875rem">Contributing to astronomy and space science research at ExoVista, working with collected data and research findings as part of the team's ongoing projects. First professional research position, running alongside undergraduate engineering coursework at SRMIST.</p>
           </div>
 
-          <div class="grid-2" style="gap:1.75rem">
-            <div class="card glass-warm fade-in-left" style="animation-delay:.1s">
-              <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Awards &amp; Recognition</h3>
-              <div style="display:flex;flex-direction:column;gap:.75rem">
-                <div class="award-item"><span class="award-emoji">🏅</span><span style="font-weight:500;font-size:.875rem">Best Journalist Award – Gaurs MUN 2025</span><div class="award-dot" style="background:#c084fc"></div></div>
-                <div class="award-item"><span class="award-emoji">🥇</span><span style="font-weight:500;font-size:.875rem">Gold Medal &amp; Trophy – Logo Designing</span><div class="award-dot" style="background:#a855f7"></div></div>
-                <div class="award-item"><span class="award-emoji">🥇</span><span style="font-weight:500;font-size:.875rem">Gold Medal – Social Work</span><div class="award-dot" style="background:#8b5cf6"></div></div>
-                <div class="award-item"><span class="award-emoji">🎖️</span><span style="font-weight:500;font-size:.875rem">Azadi Ka Amrit Mahotsav – Poetry</span><div class="award-dot" style="background:#7c3aed"></div></div>
-                <div class="award-item"><span class="award-emoji">🎖️</span><span style="font-weight:500;font-size:.875rem">Azadi Ka Amrit Mahotsav – Skit (Group Leader)</span><div class="award-dot" style="background:#e879f9"></div></div>
+          <div class="rc fi" style="transition-delay:.15s;border-color:rgba(139,92,246,.15)">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.875rem;margin-bottom:.75rem">
+              <div style="display:flex;align-items:center;gap:.7rem">
+                <span style="font-size:1.5rem">🔭</span>
+                <div>
+                  <h3 style="font-size:1.05rem;font-weight:700;color:#8b5cf6">NASA – Citizen Scientist</h3>
+                  <p style="font-weight:600;font-size:.82rem">Open Science Contributor</p>
+                </div>
               </div>
+              <span style="font-size:.68rem;color:var(--fg2);font-family:'Space Grotesk',monospace;background:rgba(139,92,246,.08);padding:.26rem .68rem;border-radius:9999px;border:1px solid rgba(139,92,246,.16);white-space:nowrap;height:fit-content">January 2026 – Present</span>
             </div>
-
-            <div class="card glass-cool fade-in-right" style="animation-delay:.2s">
-              <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.65rem"><span>📜</span> Certifications</h3>
-              <div style="display:flex;flex-direction:column;gap:.75rem">
-                <div class="cert-item"><div class="cert-dot" style="background:#a855f7"></div><span style="font-weight:500;color:#a855f7;font-size:.875rem">National Space Innovation Challenge – ISRO &amp; AIM</span></div>
-                <div class="cert-item"><div class="cert-dot" style="background:#8b5cf6"></div><span style="font-weight:500;color:#8b5cf6;font-size:.875rem">DART Planetary Defender</span></div>
-                <div class="cert-item"><div class="cert-dot" style="background:#c084fc"></div><span style="font-weight:500;color:#c084fc;font-size:.875rem">Asteroid Day Quiz</span></div>
-                <div class="cert-item"><div class="cert-dot" style="background:#7c3aed"></div><span style="font-weight:500;color:#7c3aed;font-size:.875rem">MMGEIS Scholar – Geospatial Program by Esri India</span></div>
-                <div class="cert-item"><div class="cert-dot" style="background:#e879f9"></div><span style="font-weight:500;color:#e879f9;font-size:.875rem">SOF National Science Olympiad (NSO)</span></div>
-                <div class="cert-item"><div class="cert-dot" style="background:#a855f7"></div><span style="font-weight:500;color:#a855f7;font-size:.875rem">NuTom Life Skills Olympiad – IIT Delhi affiliated</span></div>
-              </div>
-            </div>
+            <p style="color:rgba(238,238,245,.78);line-height:1.72;font-size:.875rem">Classifying astronomical data through Zooniverse's project-based research platforms and participating in collaborative analysis through the NASA Open Science Data Repository (OSDR) Working Group — ongoing contributions to active datasets alongside coursework.</p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ======= CONTACT ======= -->
-      <section id="contact" style="overflow:hidden">
-        <div class="section-blur" style="width:24rem;height:24rem;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(139,92,246,.1));top:50%;left:50%;transform:translate(-50%,-50%)"></div>
-        <div class="max-w-4xl" style="position:relative;z-index:2">
-          <div class="animated-gradient-border fade-in">
-            <div style="padding:3rem 1.75rem;position:relative;z-index:1;text-align:center">
-              <h2 style="font-size:clamp(1.6rem,5vw,2.5rem);font-weight:700;margin-bottom:1.1rem">
-                Let's <span class="text-gradient">Connect</span>
-              </h2>
-              <p style="font-size:.975rem;color:var(--muted);margin-bottom:2.25rem;line-height:1.8;max-width:40rem;margin-left:auto;margin-right:auto">
-                Interested in research collaborations, aerospace engineering, astrophysics, science communication, or space technology? Feel free to connect.
-              </p>
-              <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-bottom:1.75rem">
-                <a href="mailto:shekhar.shatakshita@gmail.com" class="btn btn-primary" style="font-size:.9rem;padding:.8rem 1.6rem">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  Get In Touch
+    <!-- ═══════ PUBLICATIONS ═══════ -->
+    <section id="publications">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(232,121,249,.04);top:0;right:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:floatY 2.2s ease-in-out infinite">📰</span><h2>Publications &amp; <span class="tg">Science Communication</span></h2></div>
+
+        <div class="agb fi" style="transition-delay:.08s">
+          <div style="padding:2rem 1.75rem;position:relative;z-index:1">
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:1.25rem;margin-bottom:1.25rem">
+              <div style="display:flex;align-items:center;gap:.8rem">
+                <span style="font-size:1.875rem">🌌</span>
+                <div>
+                  <h3 style="font-size:1.4rem;font-weight:700">The Redshift Asterism</h3>
+                  <p style="color:#e879f9;font-size:.75rem;font-family:'Space Grotesk',monospace;margin-top:.12rem">Founded June 2026</p>
+                </div>
+              </div>
+              <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="btn btn-p" style="flex-shrink:0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Read the Publication
+              </a>
+            </div>
+            <p style="color:rgba(238,238,245,.84);line-height:1.8;font-size:.92rem">
+              Articles on cosmology, astrophysics, and open questions in modern physics — black holes, dark matter, the structure and origins of the universe — written to hold up against the source literature while staying readable to a general audience. New pieces are published as research is completed; the archive is the best summary of what the publication covers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ PROJECTS ═══════ -->
+    <section id="projects">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(192,132,252,.04);bottom:0;left:25%;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:floatY 2s ease-in-out infinite">🛠️</span><h2>Technical <span class="tg">Projects</span></h2></div>
+        <p class="fi" style="font-size:.9rem;color:var(--fg2);margin-bottom:2.25rem;max-width:44rem;transition-delay:.08s;line-height:1.72">Programming applied to research, logic design, and computational problem-solving.</p>
+
+        <div style="display:flex;flex-direction:column;gap:1.1rem">
+
+          <div class="proj-card gl fi" style="border:1px solid rgba(168,85,247,.15);transition-delay:.12s">
+            <div class="proj-hdr" onclick="toggleProject('rpg')">
+              <div style="flex:1;min-width:0">
+                <div class="proj-title"><span class="ico">🎮</span><h3>RPG Mini Game</h3></div>
+                <p class="proj-stack" style="color:#a855f7">Python · Streamlit · State Logic</p>
+                <p class="proj-blurb">Stat-allocation game with hidden archetype discovery, built in Python and deployed as a live Streamlit app.</p>
+              </div>
+              <span class="proj-chev open" id="chevron-rpg">›</span>
+            </div>
+            <div class="proj-body open" id="content-rpg">
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Overview</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">A stat-allocation game where players distribute points across Strength, Intelligence, and Charisma to unlock one of three hidden legendary archetypes, built first as a Python CLI tool and later rebuilt as a Streamlit web app.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Problem</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">The original CLI version worked but mixed game logic with print statements, making it impossible to reuse the logic in a different interface or test it without manually playing through every branch.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Approach</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Rewrote the archetype logic as pure functions independent of display. Streamlit's session state then handles persistence between reruns, since the framework re-executes the whole script on every interaction.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Technologies</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Python, Streamlit, session-state management</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Challenges</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Streamlit reruns the entire script on each user action — required learning <code style="color:#c084fc;font-size:.82em">st.session_state</code> to persist stat allocations and results across reruns instead of relying on local variables.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Lessons Learned</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Separating logic from presentation early made the rebuild straightforward — the hardest part was relearning state management for a framework that doesn't keep variables alive between runs by default.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Future Scope</p>
+              <p style="color:var(--fg2);font-size:.84rem;margin-bottom:1rem">Adding more archetypes and a stat-history view so players can see how previous distributions led to different outcomes.</p>
+
+              <div class="proj-btns">
+                <a href="https://shatts-mini-rpg-saga.streamlit.app" target="_blank" rel="noopener noreferrer" class="btn btn-p">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Play Live
                 </a>
-                <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size:.9rem;padding:.8rem 1.6rem">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                  Connect on LinkedIn
+                <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-s">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                  View Code
                 </a>
               </div>
-              <p style="color:rgba(144,144,160,.7);font-size:.75rem;font-family:'Space Grotesk',monospace">
-                💡 Open to: Research Collaborations · Aerospace Engineering · Astrophysics · Science Communication · Space Technology
-              </p>
+            </div>
+          </div>
+
+          <div class="proj-card gl fi" style="border:1px solid rgba(139,92,246,.15);transition-delay:.18s">
+            <div class="proj-hdr" onclick="toggleProject('task')">
+              <div style="flex:1;min-width:0">
+                <div class="proj-title"><span class="ico">📋</span><h3>Task Tracker</h3></div>
+                <p class="proj-stack" style="color:#8b5cf6">Python · CSV I/O · CLI Design</p>
+                <p class="proj-blurb">Console-based task manager with persistent CSV storage, focusing on file I/O, data structure, and interface design.</p>
+              </div>
+              <span class="proj-chev" id="chevron-task">›</span>
+            </div>
+            <div class="proj-body" id="content-task">
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Overview</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">A command-line task manager that stores tasks with priorities and due dates in a CSV file, so data persists between sessions without needing a database.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Problem</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Built to understand file I/O and data persistence in Python directly — a CLI to-do list is small enough to make the file-handling logic the entire point of the exercise.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Approach</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Used Python's <code style="color:#8b5cf6;font-size:.82em">csv</code> module with a fixed schema read into memory on launch and rewritten on every change. CRUD operations sort by priority before display; invalid input is caught before it reaches the file write step.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Technologies</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Python, csv module, command-line interface</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Challenges</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Rewriting the entire CSV on every edit is inefficient at scale and risks data loss if the program exits mid-write — a known limitation rather than something the current version solves.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Lessons Learned</p>
+              <p style="color:rgba(238,238,245,.8);line-height:1.72;font-size:.875rem;margin-bottom:.875rem">Validating input before any file operation prevents a much larger class of bugs; designing the data schema first made every later feature easier to add.</p>
+
+              <p style="font-size:.65rem;color:var(--fg3);font-family:'Space Grotesk',monospace;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem">Future Scope</p>
+              <p style="color:var(--fg2);font-size:.84rem;margin-bottom:1rem">Migrating storage to SQLite to remove the full-file-rewrite limitation, and adding due-date reminders.</p>
+
+              <div class="proj-btns">
+                <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="btn btn-s">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                  View Code
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ SKILLS ═══════ -->
+    <section id="skills">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(139,92,246,.04);top:0;right:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:spinSlow 22s linear infinite">◈</span><h2>Skills &amp; <span class="tgc">Capabilities</span></h2></div>
+
+        <div class="g3" style="gap:1rem">
+          <div class="card gl fi" style="border-color:rgba(168,85,247,.15);transition-delay:.06s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">🐍</span><h3 style="font-size:.95rem;font-weight:700;color:#a855f7">Programming Languages</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#a855f7"></div><span style="font-size:.84rem">Python</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#a855f7"></div><span style="font-size:.84rem">SQL</span></div>
+            </div>
+          </div>
+
+          <div class="card gl fi" style="border-color:rgba(139,92,246,.15);transition-delay:.1s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">📦</span><h3 style="font-size:.95rem;font-weight:700;color:#8b5cf6">Libraries</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#8b5cf6"></div><span style="font-size:.84rem">Streamlit</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#8b5cf6"></div><span style="font-size:.84rem">csv (Python standard library)</span></div>
+            </div>
+          </div>
+
+          <div class="card gl fi" style="border-color:rgba(192,132,252,.15);transition-delay:.14s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">🛠️</span><h3 style="font-size:.95rem;font-weight:700;color:#c084fc">Tools</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#c084fc"></div><span style="font-size:.84rem">Git &amp; GitHub</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#c084fc"></div><span style="font-size:.84rem">VS Code · MySQL</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#c084fc"></div><span style="font-size:.84rem">Krita, Canva, Notion</span></div>
+            </div>
+          </div>
+
+          <div class="card gl fi" style="border-color:rgba(124,58,237,.15);transition-delay:.18s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">🔢</span><h3 style="font-size:.95rem;font-weight:700;color:#7c3aed">Scientific Computing</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#7c3aed"></div><span style="font-size:.84rem">Data analysis &amp; modelling in Python</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#7c3aed"></div><span style="font-size:.84rem">Applied orbital mechanics &amp; cosmology mathematics</span></div>
+            </div>
+          </div>
+
+          <div class="card gl fi" style="border-color:rgba(232,121,249,.15);transition-delay:.22s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">🚀</span><h3 style="font-size:.95rem;font-weight:700;color:#e879f9">Engineering Interests</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#e879f9"></div><span style="font-size:.84rem">Aerospace Engineering</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#e879f9"></div><span style="font-size:.84rem">Space Technology</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#e879f9"></div><span style="font-size:.84rem">Propulsion Systems</span></div>
+            </div>
+          </div>
+
+          <div class="card gl fi" style="border-color:rgba(168,85,247,.15);transition-delay:.26s">
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem"><span style="font-size:1.4rem">🔬</span><h3 style="font-size:.95rem;font-weight:700;color:#a855f7">Research Skills</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.45rem">
+              <div class="sk-item"><div class="sk-dot" style="background:#a855f7"></div><span style="font-size:.84rem">Scientific Writing</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#a855f7"></div><span style="font-size:.84rem">Literature Review</span></div>
+              <div class="sk-item"><div class="sk-dot" style="background:#a855f7"></div><span style="font-size:.84rem">Citizen Science &amp; Data Classification</span></div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- ======= FOOTER ======= -->
-      <footer>
-        <div class="footer-content">
-          <div class="footer-top">
-            <div class="fade-in">
-              <h3 class="footer-name">Shatakshita <span class="text-gradient">Shekhar</span></h3>
-              <p class="footer-desc">Aerospace Engineering student · Research Intern at ExoVista · Founder of The Redshift Asterism · Science Communicator</p>
-            </div>
-            <div class="footer-links fade-in" style="animation-delay:.1s">
-              <a href="mailto:shekhar.shatakshita@gmail.com" class="footer-link glass" style="border-color:rgba(168,85,247,.3)" aria-label="Email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              </a>
-              <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color:rgba(139,92,246,.3)" aria-label="LinkedIn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-              </a>
-              <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color:rgba(192,132,252,.3)" aria-label="GitHub">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-              </a>
-              <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="footer-link glass" style="border-color:rgba(232,121,249,.3)" aria-label="The Redshift Asterism">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-              </a>
-            </div>
+    <!-- ═══════ INTERESTS ═══════ -->
+    <section id="interests">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(232,121,249,.04);top:0;left:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:floatY 2.2s ease-in-out infinite">🌌</span><h2>Research <span class="tg">Interests</span></h2></div>
+        <p class="fi" style="font-size:.92rem;color:var(--fg2);margin-bottom:2rem;max-width:42rem;line-height:1.8;transition-delay:.08s">
+          I'm drawn to questions where the very large meets the very precise — cosmological structure, the geometry of spacetime, the mechanics of orbital systems. These aren't separate interests but parts of the same inquiry into how the universe organises itself, and how engineering and computation help us study it.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:.7rem" class="fi" style="transition-delay:.16s">
+          <span class="ri-tag">🌌 Cosmology</span>
+          <span class="ri-tag">⭐ Astrophysics</span>
+          <span class="ri-tag">💻 Computational Astrophysics</span>
+          <span class="ri-tag">🔢 Scientific Computing</span>
+          <span class="ri-tag">🕳️ General Relativity</span>
+          <span class="ri-tag">🛸 Orbital Mechanics</span>
+          <span class="ri-tag">🛰️ Space Systems</span>
+          <span class="ri-tag">🚀 Space Technology</span>
+          <span class="ri-tag">🌠 Observational Astronomy</span>
+          <span class="ri-tag">🔭 Space Exploration</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ PROFESSIONAL DEVELOPMENT ═══════ -->
+    <section id="profdev">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(232,121,249,.04);top:0;left:0;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:pulse 2.5s ease-in-out infinite">📡</span><h2>Professional <span class="tg">Development</span></h2></div>
+        <p class="fi" style="font-size:.88rem;color:var(--fg2);margin-bottom:2rem;max-width:44rem;transition-delay:.06s">Programmes and engagement with the global space community, outside formal coursework.</p>
+
+        <div style="display:flex;flex-direction:column;gap:1.1rem">
+          <div class="pd-item fi" style="transition-delay:.1s">
+            <span class="pd-tag up">⏳ Upcoming</span>
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:.32rem;color:#e879f9">Summer School of Rocket Science</h3>
+            <p style="font-size:.7rem;color:var(--fg2);margin-bottom:.55rem;font-family:'Space Grotesk',monospace">Propagation Institute of Space and Technology &amp; Indian Space School · 12 Jul – 12 Sep 2026</p>
+            <p style="color:rgba(238,238,245,.8);font-size:.855rem;line-height:1.62">Rocket propulsion and orbital mechanics fundamentals — direct preparation for aerospace coursework.</p>
           </div>
-          <div class="footer-bottom fade-in" style="animation-delay:.2s">
-            <p class="footer-copy">© 2026 Shatakshita Shekhar · Built with <span class="footer-heart">♥</span> for science and discovery</p>
-            <button class="back-to-top glass" onclick="scrollToTopWithWarp()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
-              Back to top
-            </button>
+
+          <div class="pd-item fi" style="transition-delay:.16s">
+            <span class="pd-tag att">✓ Attended</span>
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:.32rem;color:#a855f7">Propagation Space Month 2026</h3>
+            <p style="font-size:.7rem;color:var(--fg2);margin-bottom:.55rem;font-family:'Space Grotesk',monospace">Propagation Institute of Space and Technology · 2026</p>
+            <p style="color:rgba(238,238,245,.8);font-size:.855rem;line-height:1.62;margin-bottom:.875rem">Space industry exposure programme. Certificate pending (available after 30 June 2026).</p>
+            <a href="https://propagationinstitute.org/events/6a1523a4afa4c261b195b3b9" target="_blank" rel="noopener noreferrer" class="btn btn-s" style="font-size:.72rem;padding:.36rem .78rem">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              View Event
+            </a>
+          </div>
+
+          <div class="pd-item fi" style="transition-delay:.22s">
+            <span class="pd-tag cnt">∞ Ongoing</span>
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:.32rem;color:#8b5cf6">Webinars, Conferences &amp; Workshops</h3>
+            <p style="font-size:.7rem;color:var(--fg2);margin-bottom:.55rem;font-family:'Space Grotesk',monospace">Ongoing</p>
+            <p style="color:rgba(238,238,245,.8);font-size:.855rem;line-height:1.62;margin-bottom:.8rem">Regular participation across these organisations.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:.45rem">
+              <span class="tag-pill">ISAAC</span>
+              <span class="tag-pill">SEDS</span>
+              <span class="tag-pill">SHE in Space</span>
+              <span class="tag-pill">Propagation Institute of Space &amp; Technology</span>
+              <span class="tag-pill">Indian Space School</span>
+            </div>
           </div>
         </div>
-      </footer>
+      </div>
+    </section>
 
-    </div>
+    <!-- ═══════ TIMELINE ═══════ -->
+    <section id="timeline">
+      <div class="sb" style="width:16rem;height:16rem;background:rgba(139,92,246,.04);top:40%;right:0;"></div>
+      <div class="w4" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:floatY 2.2s ease-in-out infinite">⏳</span><h2>Academic <span class="tg">Timeline</span></h2></div>
+
+        <div class="vtl fi" style="transition-delay:.08s">
+          <div class="vtl-item">
+            <div class="vtl-dot"></div>
+            <div class="vtl-yr">2024</div>
+            <div class="vtl-evs"><div class="vtl-ev">Began sharing writing publicly — first steps in science communication</div></div>
+          </div>
+          <div class="vtl-item">
+            <div class="vtl-dot"></div>
+            <div class="vtl-yr">2025</div>
+            <div class="vtl-evs">
+              <div class="vtl-ev">Independent study in astronomy and scientific computing (Python)</div>
+              <div class="vtl-ev">Secretariat Member, The Nalanda MUN</div>
+            </div>
+          </div>
+          <div class="vtl-item">
+            <div class="vtl-dot" style="border-color:#e879f9;"></div>
+            <div class="vtl-yr" style="color:#e879f9;font-size:.7rem">2026 — Now</div>
+            <div class="vtl-evs" style="padding:1rem 1.1rem;background:rgba(232,121,249,.04);border:1px solid rgba(232,121,249,.1);border-radius:.7rem">
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Joined NASA citizen science initiatives (Zooniverse, OSDR)</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Founded The Redshift Asterism</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Joined ExoVista as Research Intern</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Began B.Tech Aerospace Engineering at SRMIST, Kattankulathur Campus</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Attended Propagation Space Month 2026</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.9)"><span style="color:#e879f9">→</span> Enrolled: Summer School of Rocket Science (July – September 2026)</div>
+            </div>
+          </div>
+          <div class="vtl-item" style="opacity:.38">
+            <div class="vtl-dot" style="border-color:rgba(168,85,247,.28)"></div>
+            <div class="vtl-yr" style="color:rgba(168,85,247,.38)">Future</div>
+            <div class="vtl-evs">
+              <div class="vtl-ev" style="color:rgba(238,238,245,.32)">Undergraduate research in aerospace and astrophysics</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.32)">Graduate studies in astrophysics or space science</div>
+              <div class="vtl-ev" style="color:rgba(238,238,245,.32)">Research contributions in space science and science communication</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ ACHIEVEMENTS ═══════ -->
+    <section id="achievements">
+      <div class="sb" style="width:18rem;height:18rem;background:rgba(232,121,249,.04);top:0;left:33%;"></div>
+      <div class="w5" style="position:relative;z-index:1">
+        <div class="sh fi"><span class="ico" style="animation:trophyBob 2.2s ease-in-out infinite">🏆</span><h2>Achievements &amp; <span class="tg">Certifications</span></h2></div>
+
+        <div class="g2" style="gap:1.5rem">
+          <div class="card glw fil" style="transition-delay:.08s">
+            <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem">Awards &amp; Recognition</h3>
+            <div style="display:flex;flex-direction:column;gap:.6rem">
+              <div class="aw-item"><span class="aw-ico">🏅</span><span style="font-weight:500;font-size:.84rem">Best Journalist Award – Gaurs MUN 2025</span><div class="aw-dot" style="background:#c084fc"></div></div>
+              <div class="aw-item"><span class="aw-ico">🥇</span><span style="font-weight:500;font-size:.84rem">Gold Medal &amp; Trophy – Logo Designing</span><div class="aw-dot" style="background:#a855f7"></div></div>
+              <div class="aw-item"><span class="aw-ico">🥇</span><span style="font-weight:500;font-size:.84rem">Gold Medal – Social Work</span><div class="aw-dot" style="background:#8b5cf6"></div></div>
+              <div class="aw-item"><span class="aw-ico">🎖️</span><span style="font-weight:500;font-size:.84rem">Azadi Ka Amrit Mahotsav – Poetry</span><div class="aw-dot" style="background:#7c3aed"></div></div>
+              <div class="aw-item"><span class="aw-ico">🎖️</span><span style="font-weight:500;font-size:.84rem">Azadi Ka Amrit Mahotsav – Skit (Group Leader)</span><div class="aw-dot" style="background:#e879f9"></div></div>
+            </div>
+          </div>
+
+          <div class="card glc fir" style="transition-delay:.14s">
+            <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem"><span>📜</span> Certifications</h3>
+            <div style="display:flex;flex-direction:column;gap:.6rem">
+              <div class="ct-item"><div class="ct-dot" style="background:#a855f7"></div><span style="font-weight:500;color:#a855f7;font-size:.84rem">National Space Innovation Challenge – ISRO &amp; AIM</span></div>
+              <div class="ct-item"><div class="ct-dot" style="background:#8b5cf6"></div><span style="font-weight:500;color:#8b5cf6;font-size:.84rem">DART Planetary Defender</span></div>
+              <div class="ct-item"><div class="ct-dot" style="background:#c084fc"></div><span style="font-weight:500;color:#c084fc;font-size:.84rem">Asteroid Day Quiz</span></div>
+              <div class="ct-item"><div class="ct-dot" style="background:#7c3aed"></div><span style="font-weight:500;color:#7c3aed;font-size:.84rem">MMGEIS Scholar – Geospatial Program by Esri India</span></div>
+              <div class="ct-item"><div class="ct-dot" style="background:#e879f9"></div><span style="font-weight:500;color:#e879f9;font-size:.84rem">SOF National Science Olympiad (NSO)</span></div>
+              <div class="ct-item"><div class="ct-dot" style="background:#a855f7"></div><span style="font-weight:500;color:#a855f7;font-size:.84rem">NuTom Life Skills Olympiad – IIT Delhi affiliated</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ CONTACT ═══════ -->
+    <section id="contact" style="overflow:hidden">
+      <div class="sb" style="width:22rem;height:22rem;background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(139,92,246,.07));top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+      <div class="w4" style="position:relative;z-index:2">
+        <div class="agb fi">
+          <div style="padding:2.75rem 1.75rem;position:relative;z-index:1;text-align:center">
+            <h2 style="font-size:clamp(1.5rem,4.5vw,2.35rem);font-weight:700;margin-bottom:.875rem">Let's <span class="tg">Connect</span></h2>
+            <p style="font-size:.9rem;color:var(--fg2);margin-bottom:2rem;line-height:1.8;max-width:36rem;margin-left:auto;margin-right:auto">
+              Open to research collaborations, aerospace discussions, astrophysics topics, and science communication opportunities.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.875rem;margin-bottom:1.5rem">
+              <a href="mailto:shekhar.shatakshita@gmail.com" class="btn btn-p">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Get In Touch
+              </a>
+              <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="btn btn-s">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                LinkedIn
+              </a>
+            </div>
+            <p style="color:rgba(144,144,160,.5);font-size:.66rem;font-family:'Space Grotesk',monospace">Research · Aerospace Engineering · Astrophysics · Science Communication</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ FOOTER ═══════ -->
+    <footer>
+      <div class="ft-inner">
+        <div class="ft-top">
+          <div class="fi">
+            <div class="ft-name">Shatakshita <span class="tg">Shekhar</span></div>
+            <p class="ft-desc">This site documents my ongoing journey through aerospace engineering, scientific computing, research, and science communication.</p>
+          </div>
+          <div class="ft-links fi" style="transition-delay:.08s">
+            <a href="mailto:shekhar.shatakshita@gmail.com" class="ft-link" aria-label="Email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/shatakshitashekhar" target="_blank" rel="noopener noreferrer" class="ft-link" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="https://github.com/shatakshita" target="_blank" rel="noopener noreferrer" class="ft-link" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </a>
+            <a href="https://shyrixv.substack.com/" target="_blank" rel="noopener noreferrer" class="ft-link" aria-label="The Redshift Asterism">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#e879f9" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="ft-bot fi" style="transition-delay:.14s">
+          <p class="ft-copy">© 2026 Shatakshita Shekhar</p>
+          <button class="btt" onclick="scrollToTop()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+            Back to top
+          </button>
+        </div>
+      </div>
+    </footer>
+
+   </div>
   </div>
 
   <script>
-    // ---- CONSTELLATION ----
-    const canvas = document.getElementById('constellation-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [], mouse = {x:-1000,y:-1000};
-    const COUNT = 65, CONN = 105, MR = 150;
+  // ═══════════════════════════════════════════════
+  // 1. ORBITAL CURSOR
+  //    — Central dot tracks mouse exactly (native
+  //      cursor hidden globally via CSS).
+  //    — An SVG ellipse (eccentric, tilted) sits
+  //      around the dot.
+  //    — A satellite point orbits it continuously.
+  //    — On hover over interactive elements:
+  //        · orbital period shortens (tighter well)
+  //        · orbit ring brightens
+  //    — On mousedown: periapsis flash (brief glow)
+  //    — All rendered each RAF tick for smoothness.
+  // ═══════════════════════════════════════════════
+  (function() {
+    const wrap   = document.getElementById('oc-wrap');
+    const orbit  = document.getElementById('oc-orbit');
+    const sat    = document.getElementById('oc-sat');
+    const flash  = document.getElementById('oc-flash');
+    const center = document.getElementById('oc-center');
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initP();
-    }
-    function initP() {
-      particles = [];
-      for (let i=0;i<COUNT;i++) {
-        const x=Math.random()*canvas.width, y=Math.random()*canvas.height;
-        particles.push({x,y,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28,r:Math.random()*1.8+.8,bx:x,by:y});
-      }
-    }
-    function animate() {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      particles.forEach(p=>{
-        const dx=mouse.x-p.x,dy=mouse.y-p.y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<MR){const f=(MR-d)/MR,a=Math.atan2(dy,dx);p.vx-=Math.cos(a)*f*.45;p.vy-=Math.sin(a)*f*.45;}
-        p.vx+=(p.bx-p.x)*.01;p.vy+=(p.by-p.y)*.01;p.vx*=.95;p.vy*=.95;p.x+=p.vx;p.y+=p.vy;
-        if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
-        if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
-      });
-      particles.forEach((p,i)=>{
-        const dm=Math.sqrt((mouse.x-p.x)**2+(mouse.y-p.y)**2),nm=dm<MR*1.4;
-        for(let j=i+1;j<particles.length;j++){
-          const o=particles[j],dx=p.x-o.x,dy=p.y-o.y,dist=Math.sqrt(dx*dx+dy*dy);
-          const ono=Math.sqrt((mouse.x-o.x)**2+(mouse.y-o.y)**2)<MR*1.4;
-          if(dist<CONN&&(nm||ono)){
-            const op=(1-dist/CONN)*.5;
-            const g=ctx.createLinearGradient(p.x,p.y,o.x,o.y);
-            g.addColorStop(0,`rgba(168,85,247,${op})`);g.addColorStop(.5,`rgba(192,132,252,${op*1.2})`);g.addColorStop(1,`rgba(139,92,246,${op})`);
-            ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(o.x,o.y);ctx.strokeStyle=g;ctx.lineWidth=op*1.8;ctx.stroke();
-          }
+    // Mouse position (raw)
+    let mx = -200, my = -200;
+    // Smoothed cursor position for the wrap translate
+    let cx = -200, cy = -200;
+
+    // Orbital parameters
+    const RX_REST    = 18;   // semi-major
+    const RY_REST    = 11;   // semi-minor
+    const RX_HOVER   = 13;   // tightens on hover
+    const RY_HOVER   = 7;
+    const TILT       = -18;  // orbit tilt degrees
+    const PERIOD_REST  = 4000; // ms per full orbit at rest
+    const PERIOD_HOVER = 1200; // ms per orbit on hover
+
+    let rx = RX_REST, ry = RY_REST;
+    let period = PERIOD_REST;
+    let orbitAlpha = 0.32;
+    let satAlpha   = 1;
+    let isHover    = false;
+    let flashActive = false;
+    let flashT = 0;
+
+    // Track time for orbital angle
+    let startTime = performance.now();
+
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX;
+      my = e.clientY;
+      if (!wrap.classList.contains('visible')) wrap.classList.add('visible');
+    });
+
+    // Selector for all interactive elements
+    const TARGETS = 'a, button, [onclick], .nav-btn, .proj-hdr, .card, .gl, .glw, .glc, .hl-btn, .agb, .rc, .pd-item, .edu-card, .aw-item, .ct-item, .focus-tag, .ri-tag, .tag-pill, .cwo-item, .sk-item, .btt';
+    document.querySelectorAll(TARGETS).forEach(el => {
+      el.addEventListener('mouseenter', () => { isHover = true;  });
+      el.addEventListener('mouseleave', () => { isHover = false; });
+    });
+
+    // Periapsis flash on click
+    window.addEventListener('mousedown', () => {
+      if (!flashActive) { flashActive = true; flashT = 0; }
+    });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function tick(now) {
+      // Smooth translate — cursor tip follows mouse precisely with slight lag
+      cx = lerp(cx, mx, 0.22);
+      cy = lerp(cy, my, 0.22);
+      wrap.style.transform = `translate(${cx}px, ${cy}px)`;
+
+      // Lerp orbital params
+      const targetRX     = isHover ? RX_HOVER   : RX_REST;
+      const targetRY     = isHover ? RY_HOVER   : RY_REST;
+      const targetPeriod = isHover ? PERIOD_HOVER : PERIOD_REST;
+      const targetAlpha  = isHover ? 0.55 : 0.32;
+      rx     = lerp(rx, targetRX, 0.08);
+      ry     = lerp(ry, targetRY, 0.08);
+      period = lerp(period, targetPeriod, 0.06);
+      orbitAlpha = lerp(orbitAlpha, targetAlpha, 0.08);
+
+      // Update orbit ellipse
+      orbit.setAttribute('rx', rx.toFixed(2));
+      orbit.setAttribute('ry', ry.toFixed(2));
+      orbit.setAttribute('stroke', `rgba(192,132,252,${orbitAlpha.toFixed(3)})`);
+
+      // Satellite angle — continuous, based on elapsed time + current period
+      const elapsed = now - startTime;
+      const angle = (elapsed % period) / period * Math.PI * 2;
+
+      // Parametric ellipse position (accounting for tilt via rotation attribute on the SVG group)
+      const tiltRad = TILT * Math.PI / 180;
+      const ex = rx * Math.cos(angle);
+      const ey = ry * Math.sin(angle);
+      // Rotate by tilt
+      const sx = ex * Math.cos(tiltRad) - ey * Math.sin(tiltRad);
+      const sy = ex * Math.sin(tiltRad) + ey * Math.cos(tiltRad);
+
+      sat.setAttribute('cx', sx.toFixed(3));
+      sat.setAttribute('cy', sy.toFixed(3));
+
+      // Satellite color: brightens near periapsis (angle ≈ 0 → closest to center in x)
+      const nearPeri = Math.abs(Math.cos(angle)); // 1 at periapsis, 0 at apoapsis
+      const satR = Math.round(lerp(140, 232, nearPeri));
+      const satG = Math.round(lerp(90, 121, nearPeri));
+      const satB = Math.round(lerp(246, 249, nearPeri));
+      sat.setAttribute('fill', `rgb(${satR},${satG},${satB})`);
+      sat.setAttribute('r', (1.5 + nearPeri * 0.8).toFixed(2));
+
+      // Periapsis click flash
+      if (flashActive) {
+        flashT += 0.06;
+        if (flashT < 1) {
+          const r = flashT < 0.5 ? flashT / 0.5 * 14 : (1 - (flashT - 0.5) / 0.5) * 14;
+          const op = flashT < 0.5 ? flashT / 0.5 : 1 - (flashT - 0.5) / 0.5;
+          flash.setAttribute('r', r.toFixed(1));
+          flash.setAttribute('opacity', (op * 0.7).toFixed(3));
+        } else {
+          flash.setAttribute('r', '0');
+          flash.setAttribute('opacity', '0');
+          flashActive = false;
         }
-      });
-      particles.forEach(p=>{
-        const dm=Math.sqrt((mouse.x-p.x)**2+(mouse.y-p.y)**2),gi=dm<MR?(1-dm/MR)*.75:0;
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=gi>0?`rgba(232,121,249,${.55+gi*.4})`:'rgba(168,85,247,.38)';ctx.fill();
-      });
-      requestAnimationFrame(animate);
-    }
-    window.addEventListener('load',resizeCanvas);
-    window.addEventListener('resize',resizeCanvas);
-    window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
-    window.addEventListener('mouseleave',()=>{mouse.x=-1000;mouse.y=-1000;});
-    resizeCanvas();animate();
-
-    // ---- PARALLAX ----
-    const pOrbs=document.getElementById('parallaxOrbs');
-    window.addEventListener('scroll',()=>{pOrbs.style.transform=`translate3d(0,${window.scrollY*-.025}px,0)`;},{passive:true});
-
-    // ---- WARP ----
-    const wo=document.getElementById('warpOverlay'),wc=document.getElementById('warpContainer');
-    function triggerWarp(){wo.classList.add('active');wc.classList.add('warping');setTimeout(()=>{wo.classList.remove('active');wc.classList.remove('warping');},300);}
-
-    // ---- NAV ----
-    const navBtns=document.querySelectorAll('.nav-btn'),navInner=document.getElementById('navInner');
-    navBtns.forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        triggerWarp();
-        navBtns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-        setTimeout(()=>{
-          const el=document.getElementById(btn.dataset.section);
-          if(el){window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-110,behavior:'smooth'});}
-        },100);
-      });
-    });
-
-    // ---- SCROLL SPY ----
-    const secIds=['about','experience','research','publications','projects','skills','interests','profdev','timeline','achievements','contact'];
-    window.addEventListener('scroll',()=>{
-      const sy=window.scrollY;
-      navInner.classList.toggle('scrolled',sy>100);
-      for(let i=secIds.length-1;i>=0;i--){
-        const el=document.getElementById(secIds[i]);
-        if(el&&el.offsetTop<=sy+200){navBtns.forEach(b=>b.classList.toggle('active',b.dataset.section===secIds[i]));break;}
       }
-    });
 
-    // ---- PROJECT TOGGLE ----
-    function toggleProject(id){
-      const c=document.getElementById('content-'+id),ch=document.getElementById('chevron-'+id);
-      c.classList.toggle('open');ch.classList.toggle('open');
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+
+
+  // ═══════════════════════════════════════════════
+  // 2. FALLING PARALLAX STARFIELD
+  // ═══════════════════════════════════════════════
+  (function() {
+    const canvas = document.getElementById('starfield');
+    const ctx    = canvas.getContext('2d');
+    let stars = [], N = 100, speed = 0.4, targetSpeed = 0.4, mouseX = 0, mouseY = 0;
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      build();
     }
 
-    // ---- BACK TO TOP ----
-    function scrollToTopWithWarp(){triggerWarp();setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),100);}
+    const PALETTE = [
+      'rgba(192,132,252,',
+      'rgba(168,85,247,',
+      'rgba(139,92,246,',
+      'rgba(238,238,245,',
+    ];
 
-    // ---- INTERSECTION OBSERVER ----
-    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
-    document.querySelectorAll('.fade-in,.fade-in-left,.fade-in-right').forEach(el=>obs.observe(el));
+    class Star {
+      constructor(scatter) {
+        this.reset();
+        if (scatter) { this.y = Math.random() * canvas.height; }
+      }
+      reset() {
+        this.x    = Math.random() * canvas.width;
+        this.y    = -2;
+        this.size = Math.random() * 1.4 + 0.4;
+        this.spd  = Math.random() * 1.8 + 0.4;
+        this.a    = Math.random() * 0.5 + 0.18;
+        this.col  = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      }
+      update() {
+        const drift = (mouseX - canvas.width/2) * 0.032 * this.size;
+        this.y += this.spd * speed;
+        this.x += drift * 0.07;
+        if (this.y > canvas.height + 4) this.reset();
+        if (this.x < 0) this.x = canvas.width;
+        if (this.x > canvas.width) this.x = 0;
+      }
+      draw() {
+        ctx.fillStyle = this.col + this.a + ')';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function build() { stars = []; for (let i=0;i<N;i++) stars.push(new Star(true)); }
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      speed += (targetSpeed - speed) * 0.05;
+      stars.forEach(s => { s.update(); s.draw(); });
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+    window.addEventListener('resize', resize);
+    resize(); loop();
+
+    // Expose targetSpeed for hover wiring
+    window._starSpeed = v => { targetSpeed = v; };
+  })();
+
+  // Wire starfield to interactive hovers
+  document.querySelectorAll('a, button, .card, .proj-hdr, .rc, .pd-item, .aw-item, .ri-tag').forEach(el => {
+    el.addEventListener('mouseenter', () => window._starSpeed && window._starSpeed(1.4));
+    el.addEventListener('mouseleave', () => window._starSpeed && window._starSpeed(0.4));
+  });
+
+
+  // ═══════════════════════════════════════════════
+  // 3. NAV + WARP
+  // ═══════════════════════════════════════════════
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const navInner = document.getElementById('navInner');
+  const wc = document.getElementById('warpContainer');
+
+  function triggerWarp() {
+    wc.classList.add('warping');
+    setTimeout(() => wc.classList.remove('warping'), 280);
+  }
+
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      triggerWarp();
+      navBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setTimeout(() => {
+        const el = document.getElementById(btn.dataset.section);
+        if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+      }, 80);
+    });
+  });
+
+  const SECS = ['about','approach','experience','research','publications','projects','skills','interests','profdev','timeline','achievements','contact'];
+  window.addEventListener('scroll', () => {
+    const sy = window.scrollY;
+    for (let i = SECS.length-1; i >= 0; i--) {
+      const el = document.getElementById(SECS[i]);
+      if (el && el.offsetTop <= sy + 200) {
+        navBtns.forEach(b => b.classList.toggle('active', b.dataset.section === SECS[i]));
+        break;
+      }
+    }
+  }, { passive: true });
+
+
+  // ═══════════════════════════════════════════════
+  // 4. PROJECT TOGGLE
+  // ═══════════════════════════════════════════════
+  function toggleProject(id) {
+    document.getElementById('content-' + id).classList.toggle('open');
+    document.getElementById('chevron-' + id).classList.toggle('open');
+  }
+
+  function scrollToTop() {
+    triggerWarp();
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 80);
+  }
+
+
+  // ═══════════════════════════════════════════════
+  // 5. INTERSECTION OBSERVER (scroll reveals)
+  // ═══════════════════════════════════════════════
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fi,.fil,.fir').forEach(el => obs.observe(el));
   </script>
 </body>
 </html>
