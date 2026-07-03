@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Force global removal of native cursor — must be first rule */
+    * { box-sizing: border-box; margin: 0; padding: 0; cursor: none !important; }
+    @media (hover: none) { * { cursor: auto !important; } }
 
     :root {
       --bg:  #07080f;
@@ -35,15 +37,7 @@
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden; width: 100%;
-      /* Transparent 1×1 cursor — works on local file:// where
-         cursor:none is blocked by browser security policy.
-         The data URI is a 1×1 transparent PNG, hotspot at 0,0. */
-      cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==") 0 0, none !important;
     }
-    /* All child elements inherit the invisible cursor */
-    * { cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==") 0 0, none !important; }
-    /* Restore on touch devices */
-    @media (hover: none) { body, * { cursor: auto !important; } }
     body > * { max-width: 100%; }
     img, svg, canvas, video { max-width: 100%; }
     ::selection { background: var(--c1); color: var(--bg); }
@@ -57,20 +51,14 @@
     ─────────────────────────────────────────── */
     #oc-wrap {
       position: fixed; top: 0; left: 0;
+      width: 100px; height: 100px;
       pointer-events: none; z-index: 999999;
-      /* We move this via transform in JS */
+      opacity: 0; transition: opacity .3s ease;
       will-change: transform;
-      /* Hidden until first mousemove */
-      opacity: 0;
-      transition: opacity .4s ease;
     }
     #oc-wrap.visible { opacity: 1; }
-
-    /* The SVG itself is centered on origin; JS translates the wrapper */
     #oc-svg {
-      position: absolute;
-      /* Center the SVG so (0,0) is at the cursor tip */
-      left: -50px; top: -50px;
+      position: absolute; top: 0; left: 0;
       width: 100px; height: 100px;
       overflow: visible;
     }
@@ -294,7 +282,6 @@
     .proj-li { display:flex; align-items:flex-start; gap:.6rem; color:var(--fg2); margin-bottom:.4rem; font-size:.84rem; }
     .proj-btns { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.35rem; }
     /* Clickable proj header — cursor hidden via global rule */
-    .proj-hdr { }
 
     /* ── EXPERIENCE TIMELINE ─────────────── */
     .tl { position:relative; }
@@ -428,29 +415,19 @@
 </head>
 <body>
 
-  <!-- ═══════ ORBITAL CURSOR ═══════
-       One SVG element; JS animates satellite position
-       along an elliptical path every frame.
-  ════════════════════════════════ -->
+  <!-- ═══════ ORBITAL CURSOR ═══════ -->
   <div id="oc-wrap">
-    <svg id="oc-svg" viewBox="-50 -50 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Elliptical orbit ring (eccentric, slightly tilted) -->
-      <ellipse id="oc-orbit" cx="0" cy="0" rx="18" ry="11"
-        transform="rotate(-18)"
-        stroke="rgba(168,85,247,0.32)" stroke-width=".8" fill="none"
-        stroke-dasharray="3 2.2"/>
-
-      <!-- Central point — the cursor tip, precise -->
-      <circle id="oc-center" cx="0" cy="0" r="2.2"
-        fill="#c084fc"/>
-
-      <!-- The travelling satellite -->
-      <circle id="oc-sat" cx="18" cy="0" r="2"
-        fill="#e879f9"/>
-
-      <!-- Periapsis flash ring — shown briefly on click -->
-      <circle id="oc-flash" cx="0" cy="0" r="0"
-        fill="none" stroke="#e879f9" stroke-width="1" opacity="0"/>
+    <svg id="oc-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Orbit ellipse — tilt handled purely in JS, no SVG transform -->
+      <ellipse id="oc-orbit"
+        stroke="rgba(192,132,252,0.45)" stroke-width="1" fill="none"
+        stroke-dasharray="3 2"/>
+      <!-- Central dot — the precise cursor tip -->
+      <circle id="oc-center" r="2.5" fill="#c084fc"/>
+      <!-- Orbiting satellite -->
+      <circle id="oc-sat" r="2" fill="#e879f9"/>
+      <!-- Periapsis click flash -->
+      <circle id="oc-flash" r="0" fill="none" stroke="#e879f9" stroke-width="1.2" opacity="0"/>
     </svg>
   </div>
 
@@ -1154,111 +1131,105 @@
   // ═══════════════════════════════════════════════
   (function() {
     const wrap   = document.getElementById('oc-wrap');
-    const orbit  = document.getElementById('oc-orbit');
-    const sat    = document.getElementById('oc-sat');
-    const flash  = document.getElementById('oc-flash');
-    const center = document.getElementById('oc-center');
+    const svg    = document.getElementById('oc-svg');
+    const orbitEl= document.getElementById('oc-orbit');
+    const satEl  = document.getElementById('oc-sat');
+    const flashEl= document.getElementById('oc-flash');
+    const dotEl  = document.getElementById('oc-center');
 
-    // Mouse position (raw)
-    let mx = -200, my = -200;
-    // Smoothed cursor position for the wrap translate
-    let cx = -200, cy = -200;
+    // The SVG is 100x100 and stays at top:0 left:0 always.
+    // We position the WRAP via transform so wrap(0,0) = cursor tip.
+    // Then all SVG elements are drawn at (50,50) + offset = cursor center.
+    const O = 50; // origin offset — center of the 100x100 SVG
+
+    let mx = -200, my = -200; // raw mouse
+    let cx = -200, cy = -200; // smoothed wrap position
 
     // Orbital parameters
-    const RX_REST    = 18;   // semi-major
-    const RY_REST    = 11;   // semi-minor
-    const RX_HOVER   = 13;   // tightens on hover
-    const RY_HOVER   = 7;
-    const TILT       = -18;  // orbit tilt degrees
-    const PERIOD_REST  = 4000; // ms per full orbit at rest
-    const PERIOD_HOVER = 1200; // ms per orbit on hover
+    const RX_REST = 20, RY_REST = 12;   // ellipse semi-axes at rest
+    const RX_HOV  = 13, RY_HOV  = 7;    // tightens on hover
+    const TILT    = -22 * Math.PI / 180; // orbit tilt in radians
+    const T_REST  = 4200;                // period ms at rest
+    const T_HOV   = 1100;                // period ms on hover
 
-    let rx = RX_REST, ry = RY_REST;
-    let period = PERIOD_REST;
-    let orbitAlpha = 0.32;
-    let satAlpha   = 1;
-    let isHover    = false;
-    let flashActive = false;
-    let flashT = 0;
+    let rx = RX_REST, ry = RY_REST, period = T_REST;
+    let orbitAlpha = 0.45;
+    let isHover = false;
+    let flashActive = false, flashT = 0;
+    const t0 = performance.now();
 
-    // Track time for orbital angle
-    let startTime = performance.now();
-
+    // Show on first move
     window.addEventListener('mousemove', e => {
-      mx = e.clientX;
-      my = e.clientY;
+      mx = e.clientX; my = e.clientY;
       if (!wrap.classList.contains('visible')) wrap.classList.add('visible');
     });
 
-    // Selector for all interactive elements
-    const TARGETS = 'a, button, [onclick], .nav-btn, .proj-hdr, .card, .gl, .glw, .glc, .hl-btn, .agb, .rc, .pd-item, .edu-card, .aw-item, .ct-item, .focus-tag, .ri-tag, .tag-pill, .cwo-item, .sk-item, .btt';
-    document.querySelectorAll(TARGETS).forEach(el => {
-      el.addEventListener('mouseenter', () => { isHover = true;  });
-      el.addEventListener('mouseleave', () => { isHover = false; });
+    // Hover: tighten orbit
+    const SEL = 'a,button,[onclick],.nav-btn,.card,.gl,.glw,.glc,.hl-btn,.agb,.rc,.pd-item,.edu-card,.aw-item,.ct-item,.focus-tag,.ri-tag,.tag-pill,.cwo-item,.sk-item,.btt,.proj-hdr';
+    document.querySelectorAll(SEL).forEach(el => {
+      el.addEventListener('mouseenter', () => isHover = true);
+      el.addEventListener('mouseleave', () => isHover = false);
     });
 
-    // Periapsis flash on click
-    window.addEventListener('mousedown', () => {
-      if (!flashActive) { flashActive = true; flashT = 0; }
-    });
+    // Click: periapsis flash
+    window.addEventListener('mousedown', () => { if (!flashActive) { flashActive = true; flashT = 0; } });
 
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function tick(now) {
-      // Smooth translate — cursor tip follows mouse precisely with slight lag
-      cx = lerp(cx, mx, 0.22);
-      cy = lerp(cy, my, 0.22);
-      wrap.style.transform = `translate(${cx}px, ${cy}px)`;
+      // 1. Move the wrap — slight lag makes it feel physical
+      cx = lerp(cx, mx, 0.25);
+      cy = lerp(cy, my, 0.25);
+      // Position wrap so its top-left is (mouse - 50, mouse - 50)
+      // meaning the SVG center (50,50) sits exactly on the cursor
+      wrap.style.transform = `translate(${cx - O}px, ${cy - O}px)`;
 
-      // Lerp orbital params
-      const targetRX     = isHover ? RX_HOVER   : RX_REST;
-      const targetRY     = isHover ? RY_HOVER   : RY_REST;
-      const targetPeriod = isHover ? PERIOD_HOVER : PERIOD_REST;
-      const targetAlpha  = isHover ? 0.55 : 0.32;
-      rx     = lerp(rx, targetRX, 0.08);
-      ry     = lerp(ry, targetRY, 0.08);
-      period = lerp(period, targetPeriod, 0.06);
-      orbitAlpha = lerp(orbitAlpha, targetAlpha, 0.08);
+      // 2. Lerp orbital params toward hover/rest targets
+      rx           = lerp(rx,           isHover ? RX_HOV : RX_REST, 0.09);
+      ry           = lerp(ry,           isHover ? RY_HOV : RY_REST, 0.09);
+      period       = lerp(period,       isHover ? T_HOV  : T_REST,  0.07);
+      orbitAlpha   = lerp(orbitAlpha,   isHover ? 0.7    : 0.45,    0.09);
 
-      // Update orbit ellipse
-      orbit.setAttribute('rx', rx.toFixed(2));
-      orbit.setAttribute('ry', ry.toFixed(2));
-      orbit.setAttribute('stroke', `rgba(192,132,252,${orbitAlpha.toFixed(3)})`);
+      // 3. Draw orbit ellipse — 4 SVG ellipse points via cx/cy/rx/ry
+      // We draw it centered at (O, O) = (50,50) in SVG space
+      // Then rotate by TILT using a transform attribute
+      orbitEl.setAttribute('cx', O);
+      orbitEl.setAttribute('cy', O);
+      orbitEl.setAttribute('rx', rx.toFixed(2));
+      orbitEl.setAttribute('ry', ry.toFixed(2));
+      orbitEl.setAttribute('transform', `rotate(${-22}, ${O}, ${O})`);
+      orbitEl.setAttribute('stroke', `rgba(192,132,252,${orbitAlpha.toFixed(3)})`);
 
-      // Satellite angle — continuous, based on elapsed time + current period
-      const elapsed = now - startTime;
-      const angle = (elapsed % period) / period * Math.PI * 2;
-
-      // Parametric ellipse position (accounting for tilt via rotation attribute on the SVG group)
-      const tiltRad = TILT * Math.PI / 180;
+      // 4. Satellite parametric position on the tilted ellipse
+      const angle = ((now - t0) % period) / period * Math.PI * 2;
       const ex = rx * Math.cos(angle);
       const ey = ry * Math.sin(angle);
-      // Rotate by tilt
-      const sx = ex * Math.cos(tiltRad) - ey * Math.sin(tiltRad);
-      const sy = ex * Math.sin(tiltRad) + ey * Math.cos(tiltRad);
+      // Rotate by TILT
+      const sx = O + ex * Math.cos(TILT) - ey * Math.sin(TILT);
+      const sy = O + ex * Math.sin(TILT) + ey * Math.cos(TILT);
+      satEl.setAttribute('cx', sx.toFixed(2));
+      satEl.setAttribute('cy', sy.toFixed(2));
 
-      sat.setAttribute('cx', sx.toFixed(3));
-      sat.setAttribute('cy', sy.toFixed(3));
+      // Satellite brightens near periapsis
+      const peri = Math.abs(Math.cos(angle));
+      satEl.setAttribute('fill', `rgb(${Math.round(lerp(140,232,peri))},${Math.round(lerp(90,121,peri))},${Math.round(lerp(246,249,peri))})`);
+      satEl.setAttribute('r', (1.6 + peri * 0.9).toFixed(2));
 
-      // Satellite color: brightens near periapsis (angle ≈ 0 → closest to center in x)
-      const nearPeri = Math.abs(Math.cos(angle)); // 1 at periapsis, 0 at apoapsis
-      const satR = Math.round(lerp(140, 232, nearPeri));
-      const satG = Math.round(lerp(90, 121, nearPeri));
-      const satB = Math.round(lerp(246, 249, nearPeri));
-      sat.setAttribute('fill', `rgb(${satR},${satG},${satB})`);
-      sat.setAttribute('r', (1.5 + nearPeri * 0.8).toFixed(2));
+      // 5. Center dot stays fixed at SVG origin
+      dotEl.setAttribute('cx', O);
+      dotEl.setAttribute('cy', O);
 
-      // Periapsis click flash
+      // 6. Click flash
       if (flashActive) {
-        flashT += 0.06;
+        flashT += 0.055;
         if (flashT < 1) {
-          const r = flashT < 0.5 ? flashT / 0.5 * 14 : (1 - (flashT - 0.5) / 0.5) * 14;
-          const op = flashT < 0.5 ? flashT / 0.5 : 1 - (flashT - 0.5) / 0.5;
-          flash.setAttribute('r', r.toFixed(1));
-          flash.setAttribute('opacity', (op * 0.7).toFixed(3));
+          const fr = flashT < .5 ? flashT / .5 * 18 : (1 - (flashT - .5) / .5) * 18;
+          const fo = flashT < .5 ? flashT / .5 : 1 - (flashT - .5) / .5;
+          flashEl.setAttribute('cx', O); flashEl.setAttribute('cy', O);
+          flashEl.setAttribute('r', fr.toFixed(1));
+          flashEl.setAttribute('opacity', (fo * 0.65).toFixed(3));
         } else {
-          flash.setAttribute('r', '0');
-          flash.setAttribute('opacity', '0');
+          flashEl.setAttribute('r', '0'); flashEl.setAttribute('opacity', '0');
           flashActive = false;
         }
       }
