@@ -9,19 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-
-  /* Force absolute global removal of native cursor across hosted root & children */
-  html, body, *, *::before, *::after, a, button, input, select, textarea { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-    cursor: none !important; 
-  }
-  @media (hover: none) { 
-    html, body, *, a, button { 
-      cursor: auto !important; 
-    } 
-  }
+    /* Force global removal of native cursor — must be first rule */
+    * { box-sizing: border-box; margin: 0; padding: 0; cursor: none !important; }
+    @media (hover: none) { * { cursor: auto !important; } }
 
     :root {
       --bg:  #07080f;
@@ -268,7 +258,7 @@
 
     /* ── SKILL ROW ───────────────────────── */
     .sk-item { display:flex; align-items:center; gap:.6rem; padding:.6rem .7rem; border-radius:.7rem;
-               background:rgba(255,255,255,.02); transition:all .25s ease; cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==") 0 0, none !important; }
+               background:rgba(255,255,255,.02); transition:all .25s ease;  }
     .sk-item:hover { transform:translateX(5px); background:rgba(255,255,255,.04); }
     .sk-dot { width:.38rem; height:.38rem; border-radius:50%; flex-shrink:0; animation:pulse 2.2s infinite; }
 
@@ -292,6 +282,7 @@
     .proj-li { display:flex; align-items:flex-start; gap:.6rem; color:var(--fg2); margin-bottom:.4rem; font-size:.84rem; }
     .proj-btns { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:1.35rem; }
     /* Clickable proj header — cursor hidden via global rule */
+    .proj-hdr { }
 
     /* ── EXPERIENCE TIMELINE ─────────────── */
     .tl { position:relative; }
@@ -324,12 +315,12 @@
     /* ── AWARDS / CERTS ──────────────────── */
     .aw-item { display:flex; align-items:center; gap:.8rem; padding:.9rem; border-radius:.8rem;
                background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.04);
-               transition:all .25s ease; cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==") 0 0, none !important; }
+               transition:all .25s ease;  }
     .aw-item:hover { transform:translateX(6px); border-color:rgba(168,85,247,.16); }
     .aw-ico { font-size:1.35rem; flex-shrink:0; }
     .aw-dot { margin-left:auto; width:.38rem; height:.38rem; border-radius:50%; flex-shrink:0; }
     .ct-item { display:flex; align-items:flex-start; gap:.8rem; padding:.75rem;
-               border-radius:.7rem; transition:all .25s ease; cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==") 0 0, none !important; }
+               border-radius:.7rem; transition:all .25s ease;  }
     .ct-item:hover { transform:translateX(5px); background:rgba(255,255,255,.018); }
     .ct-dot { width:.55rem; height:.55rem; border-radius:50%; margin-top:.28rem; flex-shrink:0; }
 
@@ -1173,6 +1164,14 @@
       mx = e.clientX; my = e.clientY;
       if (!wrap.classList.contains('visible')) wrap.classList.add('visible');
     });
+
+    // Force cursor:none on every element the mouse enters —
+    // beats any hosted platform stylesheet that re-enables the cursor.
+    document.addEventListener('mouseover', e => {
+      if (e.target && e.target.style) {
+        e.target.style.setProperty('cursor', 'none', 'important');
+      }
+    }, true);
 
     // Hover: tighten orbit
     const SEL = 'a,button,[onclick],.nav-btn,.card,.gl,.glw,.glc,.hl-btn,.agb,.rc,.pd-item,.edu-card,.aw-item,.ct-item,.focus-tag,.ri-tag,.tag-pill,.cwo-item,.sk-item,.btt,.proj-hdr';
