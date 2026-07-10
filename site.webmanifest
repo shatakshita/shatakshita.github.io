@@ -1,0 +1,46 @@
+{
+  "name": "Shatakshita Shekhar | Aerospace Engineering & Cosmology",
+  "short_name": "Shatakshita",
+  "description": "Aerospace Engineering student at SRMIST. Research Intern at exovista. Founder of The Redshift Asterism.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#a855f7",
+  "background_color": "#07080f",
+  "lang": "en-IN",
+  "categories": ["education", "science", "portfolio"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%2307080f'/><circle cx='96' cy='96' r='60' fill='none' stroke='%23a855f7' stroke-width='5' stroke-dasharray='10 7' opacity='.65'/><ellipse cx='96' cy='96' rx='48' ry='30' fill='none' stroke='%23c084fc' stroke-width='4' transform='rotate(-22 96 96)' opacity='.75'/><circle cx='96' cy='96' r='15' fill='%23c084fc'/><circle cx='132' cy='65' r='7' fill='%23e879f9'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%2307080f'/><circle cx='256' cy='256' r='160' fill='none' stroke='%23a855f7' stroke-width='12' stroke-dasharray='24 18' opacity='.65'/><ellipse cx='256' cy='256' rx='128' ry='80' fill='none' stroke='%23c084fc' stroke-width='10' transform='rotate(-22 256 256)' opacity='.75'/><circle cx='256' cy='256' r='40' fill='%23c084fc'/><circle cx='352' cy='173' r='18' fill='%23e879f9'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "About",
+      "url": "/#about",
+      "description": "About Shatakshita Shekhar"
+    },
+    {
+      "name": "The Redshift Asterism",
+      "url": "https://shyrixv.substack.com/",
+      "description": "Independent cosmology publication"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/shatakshita",
+      "description": "GitHub profile"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
